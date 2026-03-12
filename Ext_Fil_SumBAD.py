@@ -21,11 +21,36 @@ def slow_print(t): #makes text print slower
     
 #Arrays
 items = {
+    '[Fist Bindings]': 4,
+    '[Gauntlets]': 8,
+    '[Maulers]': 16,
+    
+    '[Staff]': 4,
+    '[Crystal Wand]': 2,
+    '[Dragons Breath Pikestaff]': 8,
+    
     '[Short Sword]': 5,
     '[Goblin Club]': 10,
-    '[Great Claw]': 20,
-}
-inventory = {}
+    '[Great Tooth]': 20
+}#Weapon List
+
+classes = {
+    'Brawler': {
+        'Monk': 1,
+        'Beast': 2
+    },
+    'Mage': {
+        'Vampire': 1,
+        'Necromancer': 2
+    },
+    'Warrior': {
+        'Rampager': 1,
+        'Knight': 2
+    }
+}#Classes and Subclasses
+
+inventory = {}#Current Held Items
+
 stats = {
     'Str': 5,
     'Dex': 5,
@@ -33,8 +58,9 @@ stats = {
     'Int': 5,
     'Wis': 5,
     'Cha': 5
-    }
-choices = []
+}#Stats
+
+choices = []#Choice list
 
 #Variables
 name = 0
@@ -44,6 +70,47 @@ investigate = 0
 exp = 0
 
 #Functions
+def cabin(weapon, choices):
+    while True:
+        print(f'''What do you do?
+1. Go to bed
+2. Investigate the cabin
+3. Leave the Cabin''')
+        choice = input('''>>> ''')
+        choices.append(choice)
+        if choice == '1':
+            slow_print('You curl up in bed for a short rest')
+            print('You recover all your health.')
+            health = max_health
+        elif choice == '2':
+            if investigate < 5 or investigate > 5:
+                slow_print('You find Nothing')
+                investigate += 1
+            elif investigate == 5:
+                slow_print('You find Nothing except for a small Cupboard behind the dresser with a [Glock]!')
+                investigate += 1
+        elif choice == '3':
+            state = 1
+        else:
+            fail()
+
+def cabin_ext():
+    slow_print('Standing outside the cabin, you see a dense forest surounding you, with only a small deer path leeding outwards.')
+    
+def town():
+    slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
+
+def woods(Dragon):
+    if Dragon == False:
+        slow_print("You can't seem to enter the woods, as if some unseen force is preventing your movements")
+        slow_print(f'"Come back when you are stronger, Hero!"')
+        state = 2
+    elif Dragon == True:
+        slow_print('The woods that once excluded you entry now let you pass.')
+
+def castle():
+        slow_print('"Ahh. Another Foolish Hero. And who might you be?"')
+
 def level(exp, level):
     slow_print(f'You are level {level}.')
     if exp == 100:
@@ -57,6 +124,7 @@ def level(exp, level):
 5.Wisdom
 6.Charisma
 >>> ''')
+        choices.append(choice)
         if lvlup == '1' or lvlup == 'Strength':
             print('Strength has Been increased by 3!')
             stats['Str'] += 3
@@ -88,6 +156,7 @@ print("""What save? (if file does not have a name, it's empty
 2.
 3. """)
 choice = input(">>> ")
+choices.append(choice)
 
 #Main
 if name == 0:
@@ -96,10 +165,12 @@ if name == 0:
     slow_print(f'Hmmm. {name}. It shall do.')
     slow_print(f'So, {name}. How do you perfer to fight?')
     time.sleep(.5)
-    style = input('''1. With a Sword(Str and Dex)
-2. With staff and mind(Int and Wis)
+    style = input('''
+1. With a Sword(Str and Dex)
+2. With Staff and Spell(Int and Wis)
 3. With my Fists(Str and Con)
 >>> ''')
+    choices.append(choice)
     if style == '1':
         slow_print('Very well, [Warrior]!')
         weapon = '[Short Sword]'
@@ -107,43 +178,19 @@ if name == 0:
         slow_print('As is only fitting, [Mage].')
         weapon = '[Staff]'
     elif style == '3':
-        slow_print('Daring are we, [Monk]?')
-        weapon = '[Bindings]'
-    
-if state == 0:#Opening
+        slow_print('Daring are we, [Brawler]?')
+        weapon = 'set of [Fist Bindings]'
     slow_print('You awaken at what seems to be home, yet remain unaware of where you are')
     slow_print(f'Next to the door you see a {weapon} hanging from a coat stand.')
-    choice = input('''What do you do?
-1. Grab the shortsword and leave.
-2. Go back to bed
-3. Investigate the cabin
->>> ''')
-    choices.append(choice)
-    if choice == '1':
-        slow_print(' ')
-    elif choce == '2':
-        slow_print(' ')
-    elif choice == '3':
-        if investigate < 5 or investigate > 5:
-            slow_print('You find Nothing')
-            investigate += 1
-        elif investigate == 5:
-            slow_print('You find Nothing except for a small Cupboard behind the dresser with a [Glock]!')
-            investigate += 1
-    else:
-        fail()
+    slow_print(f'You equip the {weapon} and leave the Cabin.')
     state = 1
-    
+if state == 0:#Cabin Interior
+    cabin(weapon, choices)
 elif state == 1:#Cabin Exterior
-    slow_print('Standing outside the cabin, you see a dense forest surounding you, with only a small deer path leeding outwards.')
+    cabin_ext()
 elif state == 2:#Town
-    slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
+    town()
 elif state == 3:#Wandering Woods
-    if Dragon == False:
-        slow_print("You can't seem to enter the woods, as if some unseen force is preventing your movements")
-        slow_print(f'"Come back when you are stronger, Hero!"')
-        state = 2
-    elif Dragon == True:
-        slow_print('The woods that once excluded you entry now let you pass.')
-elif state == 4:#castle
-    slow_print('"Ahh. Another Foolish Hero. And who might you be?"')
+    woods()
+elif state == 4:#Castle
+    castle()
