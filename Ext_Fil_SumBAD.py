@@ -102,14 +102,17 @@ if name == 0:
 >>> ''')
     if style == '1':
         slow_print('Very well, [Warrior]!')
+        weapon = '[Short Sword]'
     elif style == '2':
         slow_print('As is only fitting, [Mage].')
+        weapon = '[Staff]'
     elif style == '3':
         slow_print('Daring are we, [Monk]?')
+        weapon = '[Bindings]'
     
 if state == 0:#Opening
     slow_print('You awaken at what seems to be home, yet remain unaware of where you are')
-    slow_print('Next to the door you see a [Short Sword] hanging from a coat stand.')
+    slow_print(f'Next to the door you see a {weapon} hanging from a coat stand.')
     choice = input('''What do you do?
 1. Grab the shortsword and leave.
 2. Go back to bed
