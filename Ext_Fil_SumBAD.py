@@ -33,7 +33,7 @@ weapons = {
     '[Goblin Club]': 10,
     '[Great Tooth]': 20
 }#Weapon List
-armor = {
+armors = {
     '[Ninja suit]': 3,
     '[Monks robes]': 6,
     '[Beasts pelt]': 14,
@@ -103,6 +103,7 @@ def cabin(weapon, choices, state):
                 investigate += 1
             elif investigate == 5:
                 slow_print('You find Nothing except for a small Cupboard behind the dresser with a [Glock]!')
+                inventory['Weapon'] = '[Glock]'
                 investigate += 1
         elif choice == '3':
             state = 1
@@ -123,7 +124,8 @@ def cabin_ext(choices, well, style):
             state = 0
             break
         elif choice == '2':
-            slow_print('Walking around the cabin, you find a mostly empty yard. The only items of note being a deer skull staring through the trees, that always follows your gaze, and an old well, coated in blood.')
+            slow_print('Walking around the cabin, you find a mostly empty yard. The only items of note being a deer skull staring through the trees,')
+            slow_print('always following your gaze, and an old well, coated in blood.')
             while True:
                 choice = input('''What do you do?
 1. Explore the woods
@@ -135,15 +137,19 @@ def cabin_ext(choices, well, style):
                     slow_print('Looking through the woods, you find the deer skull is always 2 trees away. Always at the edge of your vision.')
                 elif choice == '2':
                     if well == False:
-                        well == True
+                        well = True
                         slow_print('Looking down the well, you see what seems to be a body, only 2 feet down.')
                         slow_print('Pulling the corpse up you find it wearing a full set of armor')
                         if style == '1':
                             print('You gained [Iron armor]!')
+                            armor = '[Iron armor]'
                         elif style == '2':
                             print('You gained [Wizards robes]!')
+                            armor = '[Wizards robes]'
                         elif style == '3':
                             print('You gained [Ninja suit]!')
+                            armor = '[Ninja suit]'
+                        inventory['Armor'] = armor
                     elif well == True:
                         slow_print('"You may not desecrate this body more, Hero!"')
                 elif choice == '3':
@@ -242,14 +248,15 @@ if name == 0:
     slow_print('You awaken at what seems to be home, yet remain unaware of where you are')
     slow_print(f'Next to the door you see a {weapon} hanging from a coat stand.')
     slow_print(f'You equip the {weapon} and leave the Cabin.')
+    inventory ['Weapon'] = weapon
     state = 1
 if state == 0:#Cabin Interior
     cabin(weapon, choices)
 elif state == 1:#Cabin Exterior
-    cabin_ext()
+    cabin_ext(choices, well, style)
 elif state == 2:#Town
-    town()
+    town(choices)
 elif state == 3:#Wandering Woods
-    woods()
+    woods(choices)
 elif state == 4:#Castle
-    castle()
+    castle(choices)
