@@ -78,12 +78,13 @@ choices = []#Choice list
 #Variables
 name = 0
 level = 0
+state = 0
 investigate = 0
 exp = 0
 well = False
 
 #Functions
-def cabin(weapon, choices):
+def cabin(weapon, choices, state):
     slow_print('Heading inside the cabin, you find it mostly barren, but for a bed, a coatrack, and a solitary dresser')
     while True:
         print(f'''What do you do?
@@ -104,7 +105,8 @@ def cabin(weapon, choices):
                 slow_print('You find Nothing except for a small Cupboard behind the dresser with a [Glock]!')
                 investigate += 1
         elif choice == '3':
-            cabin_ext(choices)
+            state = 1
+            break
         else:
             fail()
 
@@ -118,7 +120,8 @@ def cabin_ext(choices, well, style):
 >>> ''')
         choices.append(choice)
         if choice == '1':
-            cabin(weapon,choices)
+            state = 0
+            break
         elif choice == '2':
             slow_print('Walking around the cabin, you find a mostly empty yard. The only items of note being a deer skull staring through the trees, that always follows your gaze, and an old well, coated in blood.')
             while True:
@@ -148,6 +151,8 @@ def cabin_ext(choices, well, style):
                 else:
                     fail()
         elif choice == '3':
+            state = 2
+            break
         else:
             fail()
             
