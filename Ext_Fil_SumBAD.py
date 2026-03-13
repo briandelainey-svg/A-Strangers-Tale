@@ -20,7 +20,7 @@ def slow_print(t): #makes text print slower
     print(' ') #dont touch this
     
 #Arrays
-items = {
+weapons = {
     '[Fist Bindings]': 4,
     '[Gauntlets]': 8,
     '[Maulers]': 16,
@@ -33,6 +33,19 @@ items = {
     '[Goblin Club]': 10,
     '[Great Tooth]': 20
 }#Weapon List
+armor = {
+    '[Ninja suit]': 3,
+    '[Monks robes]': 6,
+    '[Beasts pelt]': 14,
+    
+    '[Wizard robes]':2,
+    '[Bloody regalia]': 4,
+    '[Unholy cloak]': 4,
+    
+    '[Iron Armor]': 5,
+    '[Giants hide]': 9,
+    '[Dragonite plate]': 20
+}#Armor types
 
 classes = {
     'Brawler': {
@@ -65,12 +78,13 @@ choices = []#Choice list
 #Variables
 name = 0
 level = 0
-state = 0
 investigate = 0
 exp = 0
+well = False
 
 #Functions
 def cabin(weapon, choices):
+    slow_print('Heading inside the cabin, you find it mostly barren, but for a bed, a coatrack, and a solitary dresser')
     while True:
         print(f'''What do you do?
 1. Go to bed
@@ -90,13 +104,53 @@ def cabin(weapon, choices):
                 slow_print('You find Nothing except for a small Cupboard behind the dresser with a [Glock]!')
                 investigate += 1
         elif choice == '3':
-            state = 1
+            cabin_ext(choices)
         else:
             fail()
 
-def cabin_ext():
+def cabin_ext(choices, well, style):
     slow_print('Standing outside the cabin, you see a dense forest surounding you, with only a small deer path leeding outwards.')
-    
+    while True:
+        choice = input('''What do you do?
+1. Go inside
+2. Explore
+3. Follow the trail
+>>> ''')
+        choices.append(choice)
+        if choice == '1':
+            cabin(weapon,choices)
+        elif choice == '2':
+            slow_print('Walking around the cabin, you find a mostly empty yard. The only items of note being a deer skull staring through the trees, that always follows your gaze, and an old well, coated in blood.')
+            while True:
+                choice = input('''What do you do?
+1. Explore the woods
+2. Investigate the well
+3. Go to the front of the Cabin
+>>> ''')
+                choices.append(choice)
+                if choice == '1':
+                    slow_print('Looking through the woods, you find the deer skull is always 2 trees away. Always at the edge of your vision.')
+                elif choice == '2':
+                    if well == False:
+                        well == True
+                        slow_print('Looking down the well, you see what seems to be a body, only 2 feet down.')
+                        slow_print('Pulling the corpse up you find it wearing a full set of armor')
+                        if style == '1':
+                            print('You gained [Iron armor]!')
+                        elif style == '2':
+                            print('You gained [Wizards robes]!')
+                        elif style == '3':
+                            print('You gained [Ninja suit]!')
+                    elif well == True:
+                        slow_print('"You may not desecrate this body more, Hero!"')
+                elif choice == '3':
+                    break
+                else:
+                    fail()
+        elif choice == '3':
+        else:
+            fail()
+            
 def town():
     slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
 
