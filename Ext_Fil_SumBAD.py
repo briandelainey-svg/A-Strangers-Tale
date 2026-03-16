@@ -82,13 +82,17 @@ name = 0
 level = 0
 state = 0
 investigate = 0
+style = 0
 exp = 0
 well = False
+max_health = 15
+health = max_health
 
 #Functions
-def cabin(weapon, choices, state):
-    slow_print('Heading inside the cabin, you find it mostly barren, but for a bed, a coatrack, and a solitary dresser')
-    while True:
+    #Cabin Interior
+def cabin(weapon, choices, state, health , max_health):
+    slow_print('Inside the cabin is mostly barren, but for a bed, a coatrack, and a solitary dresser')
+    while state == 0:
         print(f'''What do you do?
 1. Go to bed
 2. Investigate the cabin
@@ -111,81 +115,82 @@ def cabin(weapon, choices, state):
                 investigate += 1
         elif choice == '3':
             state = 1
-            return
+            break
         else:
             fail()
-
-def cabin_ext(choices, well, style):
+        return state, health
+    
+    #Cabin Exterior
+def cabin_ext(choices, well, style, state):
     slow_print('Standing outside your home, you see a dense forest surounding you, with only a small deer path leeding outwards.')
-    while True:
-        choice = input('''What do you do?
+    choice = input('''What do you do?
 1. Go inside
 2. Explore
 3. Follow the trail
 >>> ''')
-        choices.append(choice)
-        if choice  == 'b':
-            print(inventory)
-        if choice == '1':
-            state = 0
-            return state
-        elif choice == '2':
-            slow_print('Walking around the cabin, you find a mostly empty yard. The only items of note being a deer skull staring through the trees,')
-            slow_print('always following your gaze, and an old well, coated in blood.')
-            while True:
-                choice = input('''What do you do?
+    choices.append(choice)
+    if choice  == 'b':
+        print(inventory)
+    if choice == '1':
+        state = 0
+    elif choice == '2':
+        slow_print('Walking around the cabin, you find a mostly empty yard. The only items of note being a deer skull staring through the trees,')
+        slow_print('always following your gaze, and an old well, coated in blood.')
+        while True:
+            choice = input('''What do you do?
 1. Explore the woods
 2. Investigate the well
 3. Go to the front of the Cabin
 >>> ''')
-                choices.append(choice)
-                if choice  == 'b':
-                    print(inventory)
-                if choice == '1':
-                    slow_print('Looking through the woods, you find the deer skull is always 2 trees away. Always at the edge of your vision.')
-                    while True:
-                        choice = input('''Do you continue, or return?
+            choices.append(choice)
+            if choice  == 'b':
+                print(inventory)
+            if choice == '1':
+                slow_print('Looking through the woods, you find the deer skull is always 2 trees away. Always at the edge of your vision.')
+                while True:
+                    choice = input('''Do you continue, or return?
 1.Continue onward
 2.Return to the well
 >>> ''')
-                        choices.append(choice)
-                        if choice  == 'b':
-                            print(inventory)
-                        if choice == '1':
-                            slow_print('')
-                        elif choice == '2':
-                            break
-                elif choice == '2':
-                    if well == False:
-                        well = True
-                        slow_print('Looking down the well, you see what seems to be a body, only 2 feet down.')
-                        slow_print('Pulling the corpse up you find it wearing a full set of armor')
-                        if style == '1':
-                            print('You gained [Iron armor]!')
-                            armor = '[Iron armor]'
-                        elif style == '2':
-                            print('You gained [Wizards robes]!')
-                            armor = '[Wizards robes]'
-                        elif style == '3':
-                            print('You gained [Ninja suit]!')
-                            armor = '[Ninja suit]'
-                        inventory['Armor'] = armor
-                    elif well == True:
-                        slow_print('"You may not desecrate this body more, Hero!"')
-                elif choice == '3':
-                    break
-                else:
-                    fail()
-        elif choice == '3':
-            state = 2
-            return state
-        else:
-            fail()
-        
-            
+                    choices.append(choice)
+                    if choice  == 'b':
+                        print(inventory)
+                    if choice == '1':
+                        slow_print('')
+                    elif choice == '2':
+                        break
+            elif choice == '2':
+                if well == False:
+                    well = True
+                    slow_print('Looking down the well, you see what seems to be a body, only 2 feet down.')
+                    slow_print('Pulling the corpse up you find it wearing a full set of armor')
+                    if style == '1':
+                        print('You gained [Iron armor]!')
+                        armor = '[Iron armor]'
+                    elif style == '2':
+                        print('You gained [Wizards robes]!')
+                        armor = '[Wizards robes]'
+                    elif style == '3':
+                        print('You gained [Ninja suit]!')
+                        armor = '[Ninja suit]'
+                    inventory['Armor'] = armor
+                elif well == True:
+                    slow_print('"You may not desecrate this body more, Hero!"')
+            elif choice == '3':
+                break
+            else:
+                fail()
+    elif choice == '3':
+        state = 2
+    else:
+        fail()
+    return state
+
+    #Town  
 def town():
     slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
-
+    
+    #The Woods
 def woods(Dragon):
     if Dragon == False:
         slow_print("You can't seem to enter the woods, as if some unseen force is preventing your movements")
@@ -195,9 +200,11 @@ def woods(Dragon):
     elif Dragon == True:
         slow_print('The woods that once excluded you entry now let you pass.')
 
+    #Castle
 def castle():
         slow_print('"Ahh. Another Foolish Hero. And who might you be?"')
 
+    #Level
 def level(exp, level):
     slow_print(f'You are level {level}.')
     if exp == 100:
@@ -213,27 +220,27 @@ Lck(Charisma)
 >>> ''')
         choices.append(choice)
         if lvlup == '1' or lvlup == 'Strength':
-            print('Strength has Been increased by 3!')
-            stats['Str'] += 3
+            print('Strength has Been increased by 1!')
+            stats['Str'] += 1
         elif lvlup == '2' or lvlup == 'Dexterity':
-            print('Dexterity has Been increased by 3!')
-            stats['Dex'] += 3
+            print('Dexterity has Been increased by 1!')
+            stats['Dex'] += 1
         elif lvlup == '3' or lvlup == 'Constitution':
-            print('Constitution has Been increased by 3!')
-            stats['Con'] += 3
+            print('Constitution has Been increased by 1!')
+            stats['Con'] += 1
         elif lvlup == '4' or lvlup == 'Intelligence':
-            print('Intelligence has Been increased by 3!')
-            stats['Int'] += 3
+            print('Intelligence has Been increased by 1!')
+            stats['Int'] += 1
         elif lvlup == '5' or lvlup == 'Wisdom':
-            print('Wisdom has Been increased by 3!')
-            stats['Wis'] += 3
+            print('Wisdom has Been increased by 1!')
+            stats['Wis'] += 1
         elif lvlup == '6' or lvlup == 'Luck':
-            print('Luck has Been increased by 3!')
-            stats['Lck'] += 3
+            print('Luck has Been increased by 1!')
+            stats['Lck'] += 1
     else:
         tnl = 100 - exp
         slow_print(f'You need {tnl} more experience until next level up.')
-    
+    #Mess Up
 def fail():
     slow_print('Good job Dumbass')
 
@@ -252,34 +259,39 @@ if name == 0:
     slow_print(f'Hmmm. {name}. It shall do.')
     slow_print(f'So, {name}. How do you perfer to fight?')
     time.sleep(.5)
-    style = input('''
+    while inventory['Weapon'] == 0:
+        style = input('''
 1. With a Sword(Str and Con)
 2. With Staff and Spell(Int and Wis)
 3. With my Fists(Dex and Lck)
 >>> ''')
-    choices.append(choice)
-    if style == '1':
-        slow_print('Very well, [Warrior]!')
-        weapon = '[Short Sword]'
-    elif style == '2':
-        slow_print('As is only fitting, [Mage].')
-        weapon = '[Staff]'
-    elif style == '3':
-        slow_print('Daring are we, [Brawler]?')
-        weapon = '[Fist Binding]'
+        choices.append(choice)
+        if style == '1':
+            slow_print('Very well, [Warrior]!')
+            weapon = '[Short Sword]'
+        elif style == '2':
+            slow_print('As is only fitting, [Mage].')
+            weapon = '[Staff]'
+        elif style == '3':
+            slow_print('Daring are we, [Brawler]?')
+            weapon = '[Fist Binding]'
+        else:
+            fail()
+        inventory ['Weapon'] = weapon
     slow_print('You awaken at what seems to be home, yet remain unaware of where you are')
     slow_print(f'Next to the door you see a {weapon} and a backpack hanging from a coat stand.')
     slow_print(f'You equip the {weapon} and bag as you leave the Cabin.')
-    inventory ['Weapon'] = weapon
     state = 1
+    
 while True:
+    max_health = stats['Con'] * 5
     if state == 0:#Cabin Interior
-        cabin(weapon, choices)
+        cabin(weapon, choices, state, health, max_health)
     elif state == 1:#Cabin Exterior
-        cabin_ext(choices, well, style)
+        cabin_ext(choices, well, style, state)
     elif state == 2:#Town
-        town(choices)
+        town(choices, state)
     elif state == 3:#Wandering Woods
-        woods(choices)
+        woods(choices, state)
     elif state == 4:#Castle
-        castle(choices)
+        castle(choices, state)
