@@ -62,8 +62,8 @@ classes = {
     }
 }#Classes and Subclasses
 
-inventory = {'Weapon': 0,
-             'Armor': 0
+inventory = {'Weapon': None,
+             'Armor': None
              }#Current Held Items
 
 stats = {
@@ -80,7 +80,8 @@ choices = []#Choice list
 #Variables
 name = 0
 level = 0
-state = 0
+state = 1
+destination = 1
 investigate = 0
 style = 0
 exp = 0
@@ -91,6 +92,7 @@ health = max_health
 #Functions
     #Cabin Interior
 def cabin(weapon, choices, state, health , max_health):
+    global destination
     slow_print('Inside the cabin is mostly barren, but for a bed, a coatrack, and a solitary dresser')
     while state == 0:
         print(f'''What do you do?
@@ -114,14 +116,14 @@ def cabin(weapon, choices, state, health , max_health):
                 inventory['Weapon'] = '[Glock]'
                 investigate += 1
         elif choice == '3':
-            state = 1
-            break
+            destination = 1
+            return health
         else:
             fail()
-        return state, health
     
     #Cabin Exterior
 def cabin_ext(choices, well, style, state):
+    global destination
     slow_print('Standing outside your home, you see a dense forest surounding you, with only a small deer path leeding outwards.')
     choice = input('''What do you do?
 1. Go inside
@@ -132,7 +134,8 @@ def cabin_ext(choices, well, style, state):
     if choice  == 'b':
         print(inventory)
     if choice == '1':
-        state = 0
+        destination = 0
+        return
     elif choice == '2':
         slow_print('Walking around the cabin, you find a mostly empty yard. The only items of note being a deer skull staring through the trees,')
         slow_print('always following your gaze, and an old well, coated in blood.')
@@ -181,21 +184,22 @@ def cabin_ext(choices, well, style, state):
             else:
                 fail()
     elif choice == '3':
-        state = 2
+        destination = 2
+        return
     else:
         fail()
-    return state
-
+        
     #Town  
 def town():
     slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
     
     #The Woods
 def woods(Dragon):
+    global destination
     if Dragon == False:
         slow_print("You can't seem to enter the woods, as if some unseen force is preventing your movements")
         slow_print(f'"Come back when you are stronger, Hero!"')
-        state = 2
+        destination = 2
         
     elif Dragon == True:
         slow_print('The woods that once excluded you entry now let you pass.')
@@ -252,14 +256,14 @@ print("""What save? (if file does not have a name, it's empty
 choice = input(">>> ")
 choices.append(choice)
 
-#Main
+#Charecter Creator
 if name == 0:
     name = input('''What is your name, Hero?
 >>> ''')
     slow_print(f'Hmmm. {name}. It shall do.')
     slow_print(f'So, {name}. How do you perfer to fight?')
     time.sleep(.5)
-    while inventory['Weapon'] == 0:
+    while inventory['Weapon'] == None:
         style = input('''
 1. With a Sword(Str and Con)
 2. With Staff and Spell(Int and Wis)
@@ -281,17 +285,32 @@ if name == 0:
     slow_print('You awaken at what seems to be home, yet remain unaware of where you are')
     slow_print(f'Next to the door you see a {weapon} and a backpack hanging from a coat stand.')
     slow_print(f'You equip the {weapon} and bag as you leave the Cabin.')
-    state = 1
     
-while True:
+#Main
+while True:#Main Loop
+    print ('state =',state)
     max_health = stats['Con'] * 5
     if state == 0:#Cabin Interior
         cabin(weapon, choices, state, health, max_health)
+        if destination == '1':
+            state = 1
     elif state == 1:#Cabin Exterior
         cabin_ext(choices, well, style, state)
+        if destination == '0':
+            state = 0
+        elif destination == '2':
+            state = 2
     elif state == 2:#Town
         town(choices, state)
+        if destination == '1':
+            state = 1
+        elif destination == '3':
+            state = 3
+        elif destination == '4':
+            state = 4
     elif state == 3:#Wandering Woods
         woods(choices, state)
+        if destination == '2':
+            state = 2
     elif state == 4:#Castle
         castle(choices, state)
