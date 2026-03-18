@@ -294,18 +294,20 @@ def fail():
     slow_print('Good job Dumbass')
 
 #Game Save
-    data = Path(f'{file}.pkl')#defines file path
-if data.exists() and data.stat().st_size > 0:#checks if file already exists
-    with open(data, 'rb') as pickle_file:#grabs all items from pkl file
-        items = pickle.load(pickle_file)
-else:
-    with open('1.pkl', 'wb') as pickle_file:#creates .pkl file if it doesnt exist
-        pickle.dump(items, pickle_file, protocol=pickle.HIGHEST_PROTOCOL)
+rep = 0
+save = [inventory, state, name, style, level, investigatec, exp, stats, well, skull]
+while rep < 3:
+    rep += 1
+    data = Path(f'{rep}.pkl')#defines file path
+    if data.exists() and data.stat().st_size > 0:#checks if file already exists
+        with open(data, 'rb') as pickle_file:#grabs all items from pkl file
+            items = pickle.load(pickle_file)
+    else:
+        with open(f'{rep}.pkl', 'wb') as pickle_file:#creates .pkl file if it doesnt exist
+            pickle.dump(name, pickle_file, protocol=pickle.HIGHEST_PROTOCOL)
+        print(f'{rep}.{name} ')
         
-print("""What save? (if file does not have a name, it's empty
-1.
-2.
-3. """)
+print("What save? (if file does not have a name, it's empty)")
 file = input(">>> ")
 
 
