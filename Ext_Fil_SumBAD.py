@@ -10,7 +10,8 @@
 import sys
 import time
 import random
-
+import pickle
+from pathlib import Path
 #Slow Print
 def slow_print(t): #makes text print slower
     for l in t:
@@ -116,7 +117,7 @@ def cabin(weapon, choices, state, health , max_health):
         choice = input('''>>> ''')
         choices.append(choice)
         if choice  == 'b':
-            print(inventory)
+            bag(inventory)
         if choice == '1':
             slow_print('You curl up in bed for a short rest')
             print('You recover all your health.')
@@ -147,7 +148,7 @@ def cabin_ext(choices, well, skull, style, state):
 >>> ''')
         choices.append(choice)
         if choice  == 'b':
-            print(inventory)
+            bag(inventory)
         if choice == '1':
             destination = 0
             return
@@ -162,7 +163,7 @@ def cabin_ext(choices, well, skull, style, state):
 >>> ''')
                 choices.append(choice)
                 if choice  == 'b':
-                    print(inventory)
+                    bag(inventory)
                 if choice == '1':
                     if skull == False:
                         slow_print('Looking through the woods, you find the deer skull is always 2 trees away. Always at the edge of your vision.')
@@ -173,7 +174,7 @@ def cabin_ext(choices, well, skull, style, state):
 >>> ''')
                             choices.append(choice)
                             if choice  == 'b':
-                                print(inventory)
+                                bag(inventory)
                             if choice == '1':
                                 slow_print('Walking through the woods, you follow the skulls gaze to a small clearing.')
                                 slow_print('Inside the clearing, you see a ring of mushrooms around ther perimeter. Standing in the center is an old man.')
@@ -249,6 +250,9 @@ def woods(Dragon):
 def castle():
         slow_print('"Ahh. Another Foolish Hero. And who might you be?"')
 
+    #Backpack
+def bag(inventory):
+    print(inventory)
     #Level
 def level(exp, level):
     slow_print(f'You are level {level}.')
@@ -290,13 +294,22 @@ def fail():
     slow_print('Good job Dumbass')
 
 #Game Save
+    data = Path(f'{file}.pkl')#defines file path
+if data.exists() and data.stat().st_size > 0:#checks if file already exists
+    with open(data, 'rb') as pickle_file:#grabs all items from pkl file
+        items = pickle.load(pickle_file)
+else:
+    with open('1.pkl', 'wb') as pickle_file:#creates .pkl file if it doesnt exist
+        pickle.dump(items, pickle_file, protocol=pickle.HIGHEST_PROTOCOL)
+        
 print("""What save? (if file does not have a name, it's empty
 1.
 2.
 3. """)
-choice = input(">>> ")
-choices.append(choice)
+file = input(">>> ")
 
+
+        
 #Charecter Creator
 if name == 0:
     name = input('''What is your name, Hero?
