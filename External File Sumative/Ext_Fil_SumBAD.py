@@ -78,7 +78,12 @@ classes = {
 
 inventory = {'Weapon': None,
              'Armor': None,
-             'Ability': None
+             'Ability': None,
+             'Food': {
+                 'Apple': 0,
+                 'Bread': 0,
+                 'Jerkey': 0
+                 }
              }#Current Held Items
 
 stats = {
@@ -243,6 +248,7 @@ def town(choices, state, gold):
         slow_print("Your memory nags at the back of your head that somthing isn't right. The streets should be bustling with noon day shoppers.")
         slow_print('As you make to investigate, you spot a large cage full of people surrounded by goblinoid creatures with clubs.')
         slow_print('Walking towards them, you are suddonely accosted from behind.')
+        script = True
         battle = 1
         combat(max_health)
     slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
@@ -359,8 +365,9 @@ if name == 0:
             fail()
         inventory ['Weapon'] = weapon
     slow_print('You awaken at what seems to be home, yet remain unaware of where you are')
-    slow_print(f'Next to the door you see a {weapon} and a backpack hanging from a coat stand.')
+    slow_print(f'Next to the door you see a {weapon} and a backpack full of bread hanging from a coat stand.')
     slow_print(f'You equip the {weapon} and bag as you leave the Cabin.')
+    inventory ['Food']['Bread'] += 5
     
 #Main
 while True:
