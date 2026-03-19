@@ -12,6 +12,7 @@ import time
 import random
 import pickle
 from pathlib import Path
+from fight import combat
 #Slow Print
 def slow_print(t): #makes text print slower
     for l in t:
@@ -33,7 +34,7 @@ weapons = {
     '[Short Sword]': 5,
     '[Goblin Club]': 10,
     '[Great Tooth]': 20
-}#Weapon List
+    }#Weapon List
 armors = {
     '[Ninja suit]': 3,
     '[Monks robes]': 6,
@@ -46,7 +47,7 @@ armors = {
     '[Iron Armor]': 5,
     '[Giants hide]': 9,
     '[Dragonite plate]': 20
-}#Armor types
+    }#Armor types
 abilities = { 
     '[Barrage]': 3,
     '[Meditative aura]': -18,
@@ -59,7 +60,7 @@ abilities = {
     '[Power swing]': 8,
     '[Holy word]': -9,
     '[Focus]': 0
-}#Abilities
+    }#Abilities
 classes = {
     'Brawler': {
         'Monk': 1,
@@ -73,7 +74,7 @@ classes = {
         'Rampager': 1,
         'Knight': 2
     }
-}#Classes and Subclasses
+    }#Classes and Subclasses
 
 inventory = {'Weapon': None,
              'Armor': None,
@@ -87,12 +88,14 @@ stats = {
     'Int': 5,
     'Wis': 5,
     'Cha': 5
-}#Stats
+    }#Stats
 
 choices = []#Choice list
 
 #Variables
 name = 0
+gold = 0
+event = 0
 level = 0
 state = 1
 destination = 1
@@ -108,7 +111,7 @@ health = max_health
     #Cabin Interior
 def cabin(weapon, choices, state, health , max_health):
     global destination
-    slow_print('Inside the cabin is mostly barren, but for a bed, a coatrack, and a solitary dresser')
+    slow_print('Inside the cabin is mostly barren, but for a bed, an empty coatrack, and a solitary dresser')
     while state == 0:
         print(f'''What do you do?
 1. Go to bed
@@ -232,9 +235,27 @@ def cabin_ext(choices, well, skull, style, state):
             fail()
 
     #Town  
-def town(choices, state):
+def town(choices, state, gold):
+    global event
+    if event < 1:
+        event += 1
+        slow_print('As you enter town, you find it all but deserted. All the people have disapeared.')
+        slow_print("Your memory nags at the back of your head that somthing isn't right. The streets should be bustling with noon day shoppers.")
+        slow_print('As you make to investigate, you spot a large cage full of people surrounded by goblinoid creatures with clubs.')
+        slow_print('Walking towards them, you are suddonely accosted from behind.')
+        battle = 1
+        combat(max_health)
     slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
-    
+    while state == 2:
+        choice = input('''Where do you go?
+1.To the Butcher(Healing)
+2.To the Blacksmith(Weapons)
+3.To the Library(Abilities)
+4.The Wandering woods
+5.The Castle
+6.The Cabin
+>>> ''')
+        
     #The Woods
 def woods(Dragon):
     global destination
@@ -294,20 +315,18 @@ def fail():
     slow_print('Good job Dumbass')
 
 #Game Save
-rep = 0
-save = [inventory, state, name, style, level, investigatec, exp, stats, well, skull]
-while rep < 3:
-    rep += 1
-    data = Path(f'{rep}.pkl')#defines file path
-    if data.exists() and data.stat().st_size > 0:#checks if file already exists
-        with open(data, 'rb') as pickle_file:#grabs all items from pkl file
-            items = pickle.load(pickle_file)
-    else:
-        with open(f'{rep}.pkl', 'wb') as pickle_file:#creates .pkl file if it doesnt exist
-            pickle.dump(name, pickle_file, protocol=pickle.HIGHEST_PROTOCOL)
-        print(f'{rep}.{name} ')
+    data = Path(f'{file}.pkl')#defines file path
+if data.exists() and data.stat().st_size > 0:#checks if file already exists
+    with open(data, 'rb') as pickle_file:#grabs all items from pkl file
+        items = pickle.load(pickle_file)
+else:
+    with open('1.pkl', 'wb') as pickle_file:#creates .pkl file if it doesnt exist
+        pickle.dump(items, pickle_file, protocol=pickle.HIGHEST_PROTOCOL)
         
-print("What save? (if file does not have a name, it's empty)")
+print("""What save? (if file does not have a name, it's empty
+1.
+2.
+3. """)
 file = input(">>> ")
 
 
@@ -345,7 +364,8 @@ if name == 0:
     
 #Main
 while True:
-    max_health = stats['Con'] * 5
+    armor = armors[inventory['Armor']]
+    max_health = stats['Con'] * 5 + armor
     if state == 0:#Cabin Interior
         cabin(weapon, choices, state, health, max_health)
         if destination == 1:
