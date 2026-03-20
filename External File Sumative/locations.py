@@ -5,7 +5,9 @@
 ## Started - 3/20/2026             ##
 ## Finished -                      ##
 #####################################
-
+#Imports
+from fight import combat
+#Functions
     #Cabin Interior
 def cabin(weapon, choices, state, health , max_health):
     global destination
