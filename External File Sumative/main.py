@@ -117,7 +117,7 @@ save = [name, gold, event, level, stats, state, glock, style, exp, well, skull, 
 #Functions
     #Cabin Interior
 def cabin(weapon, choices, state, health , max_health):
-    global destination
+    global destination, glock
     slow_print('Inside the cabin is mostly barren, but for a bed, an empty coatrack, and a solitary dresser')
     while state == 0:
         print(f'''What do you do?
@@ -138,6 +138,7 @@ def cabin(weapon, choices, state, health , max_health):
                 glock += 1
             elif glock == 5:
                 slow_print('You find Nothing except for a small Cupboard behind the dresser with a [Glock]!')
+                print('You gained [Glock]')
                 inventory['Weapon'] = '[Glock]'
                 glock += 1
         elif choice == '3':
@@ -406,7 +407,7 @@ while True:
         elif destination == 2:
             state = 2
     elif state == 2:#Town
-        town(choices, state)
+        town(choices, state, gold)
         if destination == 1:
             state = 1
         elif destination == 3:
