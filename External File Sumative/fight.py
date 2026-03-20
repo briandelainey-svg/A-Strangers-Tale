@@ -106,3 +106,8 @@ def combat(max_health):
                     return health
                 else:
                     print("You couldn't get away.")
+    if health == 0:
+        outcome = True
+    elif hp == 0:
+        outcome = False
+    return outcome
