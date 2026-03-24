@@ -49,18 +49,19 @@ armors = {
     '[Giants hide]': 9,
     '[Dragonite plate]': 20
     }#Armor types
-abilities = { 
-    '[Barrage]': 3,
-    '[Meditative aura]': 18,
-    '[CHOMP!]': 14,
-    
-    '[Firebolt]': 5,
-    '[Cure wounds]': 8,
-    '[AK47]': 23,
-    
-    '[Power swing]': 8,
-    '[Holy word]': 9,
-    '[Focus]': 0
+abilities = {
+    'Brawler': {
+        '[Barrage]': 3,
+        '[Meditative aura]': 18,
+        '[CHOMP!]': 14},
+    'Wizard': {
+        '[Firebolt]': 5,
+        '[Cure wounds]': 8,
+        '[AK47]': 23},
+    'Warrior': {
+        '[Power swing]': 8,
+        '[Holy word]': 9,
+        '[Throw]': weapons[inventory['Weapon']] * 3}
     }#Abilities
 classes = {
     'Brawler': {
@@ -284,13 +285,68 @@ def town(choices, state, gold):
 5.The Castle
 6.The Cabin
 >>> ''')
+        
         choices.append(choice)
         if choice == '1':
-            slow_print('')
-        elif choice == '2':
+            slow_print('"Welcome, Freind! What can I get for you?"')
+            while True:
+                print(f'Purse: [gold] gold')
+                product = input('''1.Apple(1 gold)
+2.Bread(3 gold)
+3.Jerkey(5 gold)
+>>> ''')
+                if product == '1':
+                    product = 'Apple'
+                    price = 1
+                elif product == '2':
+                    product = 'Bread'
+                    price = 3
+                elif product == '3':
+                    produt = 'Jerkey'
+                    price = 5
+                amount = input('''How much?
+>>> ''')
+                total = price * amount
+                if gold / total >= 1:
+                    while amount > 0:
+                        amount -= 1
+                        gold -= price
+                        inventory['Food'][product] += 1
+                else:
+                    slow_print('You dont have enough gold')
+                print('"Anything else?"(y/n)')
+                choice = input('>>> ')
+                if choice == 'n':
+                    break
+                
+       elif choice == '2':
             slow_print('')
         elif choice == '3':
-            slow_print('')
+            slow_print('"Welcome, To the library!"')
+            slow_print('"Home to knowledge unbound, for a price of course!"')
+            print(f'Purse: {gold} gold')
+            if style == 'Brawler':
+                slow_print('What do you want to learn?')
+                print('(This will replace your current ability)')
+                choice = input('''
+1.Meditative aura(10 gold)
+2.CHOMP!(30 gold
+>>> ''')
+            elif style == 'Wizard':
+                slow_print('What do you want to learn?')
+                print('(This will replace your current ability)')
+                choice = input('''
+1.Cure wounds(10 gold)
+2.AK47(30 gold
+>>> ''')                
+            elif style == 'Warrior':
+                slow_print('What do you want to learn?')
+                print('(This will replace your current ability)')
+                choice = input('''
+1.Holy word(10 gold)
+2.Throw(30 gold
+>>> ''')
+                
         elif choice == '4':
             destination = 3
         elif choice == '5':
@@ -385,12 +441,15 @@ if name == 0:
 >>> ''')
         choices.append(style)
         if style == '1':
+            style = 'Warrior'
             slow_print('Very well, [Warrior]!')
             weapon = '[Short Sword]'
         elif style == '2':
+            style = 'Mage'
             slow_print('As is only fitting, [Mage].')
             weapon = '[Staff]'
         elif style == '3':
+            style = 'Brawler'
             slow_print('Daring are we, [Brawler]?')
             weapon = '[Fist Binding]'
         else:

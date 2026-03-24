@@ -25,12 +25,7 @@ def combat(max_health):
         dmg = 4
     #Main
     while hp > 0 and health > 0:
-        #Enemy attack
-        attack = random.choice(attacks)
-        print(f'The {enemy} {attack}!')
-        health -= dmg
-        if brace == True:
-            health += 2
+        
         #Reduces ability cooldown
         if cooldown > 0:
             cooldown -= 1
@@ -41,6 +36,12 @@ def combat(max_health):
         #Ensures health never exceeds max
         if health > max_health:
             health = max_health
+        #Enemy attack
+        attack = random.choice(attacks)
+        print(f'The {enemy} {attack}!')
+        health -= dmg
+        if brace == True:
+            health += 2
         #Action
         print('What do you do?')
         choice = input('''
