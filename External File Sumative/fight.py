@@ -60,22 +60,24 @@ def combat(max_health):
             brace = True
         #Ability
         elif choice == '3':
-            #Checks if you can use ability
-            if cooldown == 0:
-                cooldown = 3
-                print(f"You use {ability}!")
-                #Checks ability type
-                if ability == 'Cure wounds' or ability == 'Meditative aura' or ability == 'Holy word':
-                    #If healing type ability
-                    print(f'You healed {effect} health')
-                    health += effect
-                #if damage type ability
+            #checks if you have an ability
+            if ability!= 0:
+                #Checks if you can use ability
+                if cooldown == 0:
+                    cooldown = 3
+                    print(f"You use {ability}!")
+                    #Checks ability type
+                    if ability == 'Cure wounds' or ability == 'Meditative aura' or ability == 'Holy word':
+                        #If healing type ability
+                        print(f'You healed {effect} health')
+                        health += effect
+                    #if damage type ability
+                    else:
+                        hp -= effect
+                #If you can't use ability
                 else:
-                    hp -= effect
-            #If you can't use ability
-            else:
-                print('You cannot use that right now.')
-                print(f'{cooldown} cooldown') 
+                    print('You cannot use that right now.')
+                    print(f'{cooldown} cooldown') 
         #Player Heal
         elif choice == '4':
             print('What do you want to eat?')
@@ -111,3 +113,6 @@ def combat(max_health):
     elif hp == 0:
         outcome = False
     return outcome
+
+if __name__ == '__main__':
+    print('Fight is the main')

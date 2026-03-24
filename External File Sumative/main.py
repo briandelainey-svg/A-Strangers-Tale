@@ -79,7 +79,7 @@ classes = {
 
 inventory = {'Weapon': None,
              'Armor': None,
-             'Ability': None,
+             'Ability': 0,
              'Food': {
                  'Apple': 0,
                  'Bread': 0,
@@ -112,12 +112,18 @@ well = False
 skull = False
 max_health = 15
 health = max_health
+outcome = 0
 #Save data
 save = [name, gold, event, level, stats, state, glock, style, exp, well, skull, max_health, health, choices ]
 #Functions
     #Cabin Interior
 def cabin(weapon, choices, state, health , max_health):
     global destination, glock
+    if outcome == False:
+        outcome = 0
+        slow_print("You wake up back at home. You could've sworn that was real... must've been a dream...")
+        health = max_health
+        print('You recover all your health.')
     slow_print('Inside the cabin is mostly barren, but for a bed, an empty coatrack, and a solitary dresser')
     while state == 0:
         print(f'''What do you do?
@@ -257,9 +263,15 @@ def town(choices, state, gold):
             if outcome == True:
                 event += 1
                 slow_print('Killing the goblin, you make your way towards the cage')
+                slow_print('Seeing there fallen comrad, the remaning goblins flee.')
+                slow_print('"Thank you, Hero! What is your name?"')
+                time.sleep(.5)
+                slow_print(f'"{name}? Thank you, {name}!"')
+                slow_print('"I am the village blacksmith. Please, come to my shop if you ever need armor or weapons!"')
+                time.sleep(.5)
             else:
                 fail()
-                destination = 1
+                destination = 0
                 return destination
         
     slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
@@ -282,9 +294,9 @@ def town(choices, state, gold):
         elif choice == '4':
             destination = 3
         elif choice == '5':
-            destination = 5
+            destination = 4
         elif choice == '6':
-            destination = 6
+            destination = 1
             
             
     #The Woods
