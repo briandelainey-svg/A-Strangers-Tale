@@ -23,7 +23,16 @@ def slow_print(t): #makes text print slower
     print(' ') #dont touch this
     
 #Arrays
-weapons = {
+inventory = {'Weapon': 0,
+             'Armor': None,
+             'Ability': 0,
+             'Food': {
+                 'Apple': 0,
+                 'Bread': 0,
+                 'Jerkey': 0
+                 }
+             }#Current Held Items    
+weapons = {0 : 0,
     '[Fist Bindings]': 4,
     '[Gauntlets]': 8,
     '[Maulers]': 16,
@@ -78,15 +87,7 @@ classes = {
     }
     }#Classes and Subclasses
 
-inventory = {'Weapon': None,
-             'Armor': None,
-             'Ability': 0,
-             'Food': {
-                 'Apple': 0,
-                 'Bread': 0,
-                 'Jerkey': 0
-                 }
-             }#Current Held Items
+
 
 stats = {
     'Str': 5,
@@ -113,18 +114,18 @@ well = False
 skull = False
 max_health = 15
 health = max_health
-outcome = 0
+outcome = True
 #Save data
 save = [name, gold, event, level, stats, state, glock, style, exp, well, skull, max_health, health, choices ]
 #Functions
     #Cabin Interior
-def cabin(weapon, choices, state, health , max_health):
+def cabin(weapon, choices, state, health , max_health, outcome):
     global destination, glock
     if outcome == False:
-        outcome = 0
+        outcome = True
         slow_print("You wake up back at home. You could've sworn that was real... must've been a dream...")
         health = max_health
-        print('You recover all your health.')
+        print('You recovered all your health.')
     slow_print('Inside the cabin is mostly barren, but for a bed, an empty coatrack, and a solitary dresser')
     while state == 0:
         print(f'''What do you do?
@@ -195,24 +196,28 @@ def cabin_ext(choices, well, skull, style, state):
                                 bag(inventory)
                             if choice == '1':
                                 slow_print('Walking through the woods, you follow the skulls gaze to a small clearing.')
-                                slow_print('Inside the clearing, you see a ring of mushrooms around ther perimeter. Standing in the center is an old man.')
+                                slow_print('Inside the clearing, you see a ring of mushrooms around the perimeter.')
+                                slow_print('Standing in the center is an old man.')
                                 choice = input('''What do you do?
 1. Attack the Man
 2. Talk to the Man
 >>> ''')
                                 if choice == '1':
-                                    combat()
+                                    slow_print('"A sorowful outcome. very well hero. Seek my home later."')
+                                    outcome = False
+                                    destination = 0
+                                    return
                                 elif choice == '2':
                                     slow_print(f'"Hello, [{name}]. Welcome to my home. This land is full of many odd places as this."')
                                     slow_print('"You have dipped your toes into the [Wandering Woods]. Few may claim that, and even fewer may leave with there lives"')
-                                    slow_print('"But you? I have plans for you. Unfortunatley, you are not privy to that information yet."')
-                                    if style == '1':
+                                    slow_print('"But you? I have plans for you. Unfortunatley, you are not privy to that information just yet."')
+                                    if style == 'Warrior':
                                         print('You gained [Power swing]')
                                         ability = '[Power swing]'
-                                    elif style == '2':
+                                    elif style == 'Mage':
                                         print('You gained [Firebolt]')
                                         ability = '[Firebolt]'
-                                    elif style == '3':
+                                    elif style == 'Brawler':
                                         print('You gained [Barrage]!')
                                         ability = '[Barrage]'
                                     inventory['Ability'] = ability
@@ -220,24 +225,24 @@ def cabin_ext(choices, well, skull, style, state):
                     elif skull == True:
                         slow_print('As you try to enter the woods, a strange force keeps you out.')
                         slow_print('Best not to question it')
-                elif choice == '2':
-                            break
+                    elif choice == '2':
+                        break
                 elif choice == '2':
                     if well == False:
-                        well = True
                         slow_print('Looking down the well, you see what seems to be a body, only 2 feet down.')
                         slow_print('Pulling the corpse up you find it wearing a full set of armor')
-                        if style == '1':
+                        if style == 'Warrior':
                             print('You gained [Iron armor]!')
                             armor = '[Iron armor]'
-                        elif style == '2':
+                        elif style == 'Mage':
                             print('You gained [Wizards robes]!')
                             armor = '[Wizards robes]'
-                        elif style == '3':
+                        elif style == 'Brawler':
                             print('You gained [Ninja suit]!')
                             armor = '[Ninja suit]'
                         inventory['Armor'] = armor
-                    elif well == True:
+                        well = True
+                    else:
                         slow_print('"You may not desecrate this body more, Hero!"')
                 elif choice == '3':
                      break
@@ -260,7 +265,7 @@ def town(choices, state, gold):
             slow_print('Walking towards them, you are suddonely accosted from behind.')
             script = True
             battle = 1
-            combat(max_health)
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats)
             if outcome == True:
                 event += 1
                 slow_print('Killing the goblin, you make your way towards the cage')
@@ -291,7 +296,8 @@ def town(choices, state, gold):
             slow_print('"Welcome, Freind! What can I get for you?"')
             while True:
                 print(f'Purse: [gold] gold')
-                product = input('''1.Apple(1 gold)
+                product = input('''
+1.Apple(1 gold)
 2.Bread(3 gold)
 3.Jerkey(5 gold)
 >>> ''')
@@ -319,8 +325,9 @@ def town(choices, state, gold):
                 if choice == 'n':
                     break
                 
-       elif choice == '2':
+        elif choice == '2':
             slow_print('')
+            
         elif choice == '3':
             slow_print('"Welcome, To the library!"')
             slow_print('"Home to knowledge unbound, for a price of course!"')
@@ -329,29 +336,120 @@ def town(choices, state, gold):
                 slow_print('What do you want to learn?')
                 print('(This will replace your current ability)')
                 choice = input('''
-1.Meditative aura(10 gold)
-2.CHOMP!(30 gold
+1.Barrage(5 gold)
+2.Meditative aura(10 gold)
+3.CHOMP!(30 gold)
 >>> ''')
+                if choice == '1':
+                    ability = '[Barrage]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [Barrage]!')
+                        else:
+                            print("You don't have enough gold.")
+                elif choice == '2':
+                    ability = '[Meditative aura]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [Meditative aura]!')
+                        else:
+                            print("You don't have enough gold.")
+                elif choice == '3':
+                    ability = '[CHOMP!]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [CHOMP!]!')
+                        else:
+                            print("You don't have enough gold.")
+                
             elif style == 'Wizard':
                 slow_print('What do you want to learn?')
                 print('(This will replace your current ability)')
                 choice = input('''
-1.Cure wounds(10 gold)
-2.AK47(30 gold
->>> ''')                
+1.Firebolt(5 gold)
+2.Cure wounds(10 gold)
+3.AK47(30 gold)
+>>> ''')
+                if choice == '1':
+                    ability = '[Firebolt]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [Firebolt]!')
+                        else:
+                            print("You don't have enough gold.")
+                elif choice == '2':
+                    ability = '[Cure wounds]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [Cure wounds]!')
+                        else:
+                            print("You don't have enough gold.")
+                elif choice == '3':
+                    ability = '[AK47]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [AK47]!')
+                        else:
+                            print("You don't have enough gold.")
+                            
             elif style == 'Warrior':
                 slow_print('What do you want to learn?')
                 print('(This will replace your current ability)')
                 choice = input('''
-1.Holy word(10 gold)
-2.Throw(30 gold
+1.Power swing(5 gold)
+2.Holy word(10 gold)
+3.Throw(30 gold)
 >>> ''')
+                if choice == '1':
+                    ability = '[Power swing]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [Power swing]!')
+                        else:
+                            print("You don't have enough gold.")
+                elif choice == '2':
+                    ability = '[Holy word]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [Holy word]!')
+                        else:
+                            print("You don't have enough gold.")
+                elif choice == '3':
+                    ability = '[Throw]'
+                    if inventory['Ability'] == ability:
+                        print('You already have this ability')
+                    else:
+                        if gold >= 5:
+                            print('You gained [Throw]!')
+                        else:
+                            print("You don't have enough gold.")
+            inventory['Ability'] = ability
+            
                 
         elif choice == '4':
             destination = 3
+            return
         elif choice == '5':
             destination = 4
+            return
         elif choice == '6':
+            return
             destination = 1
             
             
@@ -433,7 +531,7 @@ if name == 0:
     slow_print(f'Hmmm. {name}. It shall do.')
     slow_print(f'So, {name}. How do you perfer to fight?')
     time.sleep(.5)
-    while inventory['Weapon'] == None:
+    while inventory['Weapon'] == 0:
         style = input('''
 1. With a Sword(Str and Con)
 2. With Staff and Spell(Int and Wis)
@@ -468,7 +566,7 @@ while True:
         armor = 0
     max_health = stats['Con'] * 5 + armor
     if state == 0:#Cabin Interior
-        cabin(weapon, choices, state, health, max_health)
+        cabin(weapon, choices, state, health, max_health, outcome)
         if destination == 1:
             state = 1
     elif state == 1:#Cabin Exterior

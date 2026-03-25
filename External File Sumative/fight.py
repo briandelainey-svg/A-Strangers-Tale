@@ -8,11 +8,11 @@
 
 #imports
 import random
-
+from main import health, gold
 #Function
-def combat(max_health):
+def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats):
     #setup
-    global health, inventory, battle, weapons, armors, abilities, script, stats
+    global health, gold
     ability = inventory['Ability']
     effect = abilities[ability]
     cooldown = 0
@@ -23,6 +23,7 @@ def combat(max_health):
         attacks = ["The goblin swings it's club"]
         hp = 16
         dmg = 4
+        goldg = 8
     #Main
     while hp > 0 and health > 0:
         
@@ -110,9 +111,10 @@ def combat(max_health):
                 else:
                     print("You couldn't get away.")
     if health == 0:
-        outcome = True
-    elif hp == 0:
         outcome = False
+    elif hp == 0:
+        outcome = True
+        gold += goldg
     return outcome
 
 if __name__ == '__main__':
