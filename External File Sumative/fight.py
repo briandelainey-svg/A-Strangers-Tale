@@ -8,9 +8,9 @@
 
 #imports
 import random
-from main import health, gold
+
 #Function
-def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats):
+def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, done, bag):
     #setup
     global health, gold
     ability = inventory['Ability']
@@ -44,72 +44,77 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
         if brace == True:
             health += 2
         #Action
-        print('What do you do?')
-        choice = input('''
+        while choice != 'b' and choice != 'd':
+            print('What do you do?')
+            choice = input('''
 1. Attack
 2. Gaurd
 3. Ability
 4. Heal
 5. Run away
 >>> ''')
-        #Player attack
-        if choice == '1':
-            print(f'You attack the {enemy}!')
-            hp -= damage
-        #Gaurd
-        elif choice == '2':
-            print(f'You brace yourself for an attack')
-            brace = True
-        #Ability
-        elif choice == '3':
-            #checks if you have an ability
-            if ability!= 0:
-                #Checks if you can use ability
-                if cooldown == 0:
-                    cooldown = 3
-                    print(f"You use {ability}!")
-                    #Checks ability type
-                    if ability == 'Cure wounds' or ability == 'Meditative aura' or ability == 'Holy word':
-                        #If healing type ability
-                        print(f'You healed {effect} health')
-                        health += effect
-                    #if damage type ability
+            if choice == 'b':
+                bag(inventory)
+            elif choice == 'd':
+                done(save)
+            #Player attack
+            elif choice == '1':
+                print(f'You attack the {enemy}!')
+                hp -= damage
+            #Gaurd
+            elif choice == '2':
+                print(f'You brace yourself for an attack')
+                brace = True
+            #Ability
+            elif choice == '3':
+                #checks if you have an ability
+                if ability!= 0:
+                    #Checks if you can use ability
+                    if cooldown == 0:
+                        cooldown = 3
+                        print(f"You use {ability}!")
+                        #Checks ability type
+                        if ability == 'Cure wounds' or ability == 'Meditative aura' or ability == 'Holy word':
+                            #If healing type ability
+                            print(f'You healed {effect} health')
+                            health += effect
+                        #if damage type ability
+                        else:
+                            hp -= effect
+                    #If you can't use ability
                     else:
-                        hp -= effect
-                #If you can't use ability
+                        print('You cannot use that right now.')
+                        print(f'{cooldown} cooldown') 
+            #Player Heal
+            elif choice == '4':
+                print('What do you want to eat?')
+                print(f"1. Apple {inventory['Food']['Apple']}")
+                print(f"2. Bread {inventory['Food']['Bread']}")
+                print(f"3. Jerkey {inventory['Food']['Jerkey']}")
+                consume = input('>>> ')
+                if consume == '1':
+                    consume = 'Apple'
+                    health += 2
+                elif consume == '2':
+                    consume = 'Bread'
+                    health += 4
+                elif consume == '3':
+                    consume = 'Jerkey'
+                    health += 6
+                inventory['Food'][consume] -= 1
+            #Escape
+            elif choice == '5':
+                #Checks if this is a scripted battle
+                if script == True:
+                    print('You cannot run away')
                 else:
-                    print('You cannot use that right now.')
-                    print(f'{cooldown} cooldown') 
-        #Player Heal
-        elif choice == '4':
-            print('What do you want to eat?')
-            print(f"1. Apple {inventory['Food']['Apple']}")
-            print(f"2. Bread {inventory['Food']['Bread']}")
-            print(f"3. Jerkey {inventory['Food']['Jerkey']}")
-            consume = input('>>> ')
-            if consume == '1':
-                consume = 'Apple'
-                health += 2
-            elif consume == '2':
-                consume = 'Bread'
-                health += 4
-            elif consume == '3':
-                consume = 'Jerkey'
-                health += 6
-            inventory['Food'][consume] -= 1
-        #Escape
-        elif choice == '5':
-            #Checks if this is a scripted battle
-            if script == True:
-                print('You cannot run away')
-            else:
-                #Random chance to escape
-                leave = random.randint(1, 4)
-                if leave == 1:
-                    print("You got away")
-                    return health
-                else:
-                    print("You couldn't get away.")
+                    #Random chance to escape
+                    leave = random.randint(1, 4)
+                    if leave == 1:
+                        print("You got away")
+                        return health
+                    else:
+                        print("You couldn't get away.")
     if health == 0:
         outcome = False
     elif hp == 0:

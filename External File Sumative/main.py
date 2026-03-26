@@ -14,6 +14,8 @@ import pickle
 from pathlib import Path
 from fight import combat
 
+
+
 #Slow Print
 def slow_print(t): #makes text print slower
     for l in t:
@@ -135,7 +137,7 @@ def cabin(weapon, choices, state, health , max_health, outcome):
         choice = input('''>>> ''')
         choices.append(choice)
         if choice  == 'b':
-            bag(inventory)
+            bag(inventory, gold)
         if choice == '1':
             slow_print('You curl up in bed for a short rest')
             print('You recover all your health.')
@@ -167,8 +169,10 @@ def cabin_ext(choices, well, skull, style, state):
 >>> ''')
         choices.append(choice)
         if choice  == 'b':
-            bag(inventory)
-        if choice == '1':
+            bag(inventory, gold)
+        elif choice == 'd':
+            done(save)
+        elif choice == '1':
             destination = 0
             return
         elif choice == '2':
@@ -182,10 +186,13 @@ def cabin_ext(choices, well, skull, style, state):
 >>> ''')
                 choices.append(choice)
                 if choice  == 'b':
-                    bag(inventory)
-                if choice == '1':
+                    bag(inventory, gold)
+                elif choice == 'd':
+                    done(save)
+                elif choice == '1':
                     if skull == False:
                         slow_print('Looking through the woods, you find the deer skull is always 2 trees away. Always at the edge of your vision.')
+                        skull = True
                         while True:
                             choice = input('''Do you continue, or return?
 1. Continue onward
@@ -193,8 +200,10 @@ def cabin_ext(choices, well, skull, style, state):
 >>> ''')
                             choices.append(choice)
                             if choice  == 'b':
-                                bag(inventory)
-                            if choice == '1':
+                                bag(inventory, gold)
+                            elif choice == 'd':
+                                done(save)
+                            elif choice == '1':
                                 slow_print('Walking through the woods, you follow the skulls gaze to a small clearing.')
                                 slow_print('Inside the clearing, you see a ring of mushrooms around the perimeter.')
                                 slow_print('Standing in the center is an old man.')
@@ -202,8 +211,13 @@ def cabin_ext(choices, well, skull, style, state):
 1. Attack the Man
 2. Talk to the Man
 >>> ''')
-                                if choice == '1':
+                                if choice == 'b':
+                                    bag(inventory, gold)
+                                elif choice == 'd':
+                                    done(save)
+                                elif choice == '1':
                                     slow_print('"A sorowful outcome. very well hero. Seek my home later."')
+                                    fail()
                                     outcome = False
                                     destination = 0
                                     return
@@ -235,8 +249,8 @@ def cabin_ext(choices, well, skull, style, state):
                             print('You gained [Iron armor]!')
                             armor = '[Iron armor]'
                         elif style == 'Mage':
-                            print('You gained [Wizards robes]!')
-                            armor = '[Wizards robes]'
+                            print('You gained [Wizard robes]!')
+                            armor = '[Wizard robes]'
                         elif style == 'Brawler':
                             print('You gained [Ninja suit]!')
                             armor = '[Ninja suit]'
@@ -265,7 +279,7 @@ def town(choices, state, gold):
             slow_print('Walking towards them, you are suddonely accosted from behind.')
             script = True
             battle = 1
-            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats)
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, done, bag)
             if outcome == True:
                 event += 1
                 slow_print('Killing the goblin, you make your way towards the cage')
@@ -292,8 +306,12 @@ def town(choices, state, gold):
 >>> ''')
         
         choices.append(choice)
-        if choice == '1':
-            slow_print('"Welcome, Freind! What can I get for you?"')
+        if choice == 'b':
+            bag(inventory, gold)
+        elif choice == 'd':
+            done(save)
+        elif choice == '1':
+            slow_print('"Welcome, Friend! What can I get for you?"')
             while True:
                 print(f'Purse: [gold] gold')
                 product = input('''
@@ -469,8 +487,9 @@ def castle():
         slow_print('"Ahh. Another Foolish Hero. And who might you be?"')
         
     #Backpack
-def bag(inventory):
+def bag(inventory, gold):
     print(inventory)
+    print(f'Purse: {gold} gold')
     #Level
 def level(exp, level):
     slow_print(f'You are level {level}.')
@@ -510,19 +529,25 @@ Lck(Charisma)
     #Mess Up
 def fail():
     slow_print('Good job Dumbass')
-
+    
+    #Game Save
+def done(save):
+    with open(data, 'wb') as pickle_file:
+        pickle.dump(save, pickle_file)
+        destination = 12
+        return destination
+    
 #Game Save
+data = Path('data.pkl')#defines file path
 print("Do you want to load a save?")
 file = input("""1.Yes
 2.No
 >>> """)
 
 if file == '1' or file == 'Yes':
-    data = Path('data.pkl')#defines file path
-    if data.exists() and data.stat().st_size > 0:#checks if file already exists
-        with open(data, 'rb') as pickle_file:#grabs all items from data.pkl
-            items = pickle.load(pickle_file)
-        
+    with open(data, 'rb') as pickle_file:#grabs all items from data.pkl
+        save = pickle.load(pickle_file)
+
 #Charecter Creator
 if name == 0:
     name = input('''What is your name, Hero?
@@ -559,33 +584,25 @@ if name == 0:
     inventory ['Food']['Bread'] += 5
     
 #Main
+print('(Enter "b" at any time to open backpack)')
+print('(Enter "d" at any time to close game)')
 while True:
     if inventory['Armor'] != None:
         armor = armors[inventory['Armor']]
     else:
         armor = 0
     max_health = stats['Con'] * 5 + armor
+    state = destination
     if state == 0:#Cabin Interior
         cabin(weapon, choices, state, health, max_health, outcome)
-        if destination == 1:
-            state = 1
     elif state == 1:#Cabin Exterior
         cabin_ext(choices, well, skull, style, state)
-        if destination == 0:
-            state = 0
-        elif destination == 2:
-            state = 2
     elif state == 2:#Town
         town(choices, state, gold)
-        if destination == 1:
-            state = 1
-        elif destination == 3:
-            state = 3
-        elif destination == 4:
-            state = 4
     elif state == 3:#Wandering Woods
         woods(choices, state)
-        if destination == 2:
-            state = 2
     elif state == 4:#Castle
         castle(choices, state)
+    elif state == 12:#Game done
+        print('Goodbye')
+        sys.exit()
