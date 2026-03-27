@@ -118,7 +118,7 @@ max_health = 15
 health = max_health
 outcome = True
 #Save data
-save = [name, gold, event, level, stats, state, glock, style, exp, well, skull, max_health, health, choices ]
+save = [name, gold, event, level, stats, state, glock, style, exp, well, skull, max_health, health, choices]
 #Functions
     #Cabin Interior
 def cabin(weapon, choices, state, health , max_health, outcome):
@@ -172,6 +172,7 @@ def cabin_ext(choices, well, skull, style, state):
             bag(inventory, gold)
         elif choice == 'd':
             done(save)
+            return
         elif choice == '1':
             destination = 0
             return
@@ -189,6 +190,7 @@ def cabin_ext(choices, well, skull, style, state):
                     bag(inventory, gold)
                 elif choice == 'd':
                     done(save)
+                    return
                 elif choice == '1':
                     if skull == False:
                         slow_print('Looking through the woods, you find the deer skull is always 2 trees away. Always at the edge of your vision.')
@@ -203,6 +205,7 @@ def cabin_ext(choices, well, skull, style, state):
                                 bag(inventory, gold)
                             elif choice == 'd':
                                 done(save)
+                                return
                             elif choice == '1':
                                 slow_print('Walking through the woods, you follow the skulls gaze to a small clearing.')
                                 slow_print('Inside the clearing, you see a ring of mushrooms around the perimeter.')
@@ -215,6 +218,7 @@ def cabin_ext(choices, well, skull, style, state):
                                     bag(inventory, gold)
                                 elif choice == 'd':
                                     done(save)
+                                    return
                                 elif choice == '1':
                                     slow_print('"A sorowful outcome. very well hero. Seek my home later."')
                                     fail()
@@ -310,6 +314,7 @@ def town(choices, state, gold):
             bag(inventory, gold)
         elif choice == 'd':
             done(save)
+            return
         elif choice == '1':
             slow_print('"Welcome, Friend! What can I get for you?"')
             while True:
@@ -344,15 +349,135 @@ def town(choices, state, gold):
                     break
                 
         elif choice == '2':
-            slow_print('')
-            
+            slow_print('"Welcome, Hero! What can I do for you?"')
+            print(f'Purse: {gold} gold')
+            print('(This will replace your current Weapon/Armor)')
+            choice = input('''
+1. Armor
+2. Weapons
+>>> ''')
+            if style == 'Brawler':
+                if choice == '1':
+                    choice = input('''And what kind of armor do you want?
+1.Ninja suit(5 gold)
+2.Monks robes(10 gold)
+3.Beasts pelt(20 gold)
+>>> ''')
+                    if choice == '1':
+                        armor = '[Ninja suit]'
+                        price = 5
+                    elif choice == '2':
+                        armor = '[Monks robes]'
+                        price = 10
+                    elif choice == '3':
+                        armor = '[Beasts pelt]'
+                        price = 20
+                    if inventory['Armor'] != armor:
+                        inventory['Armor'] = armor
+                        gold -= price
+                elif choice == '2':
+                    choice = input('''And what kind of weapon do you want?
+1.Fist bindings(5 gold)
+2.Gauntlets(10 gold)
+3.Maulers(20 gold)
+>>> ''')
+                    if choice == '1':
+                        weapon = '[Fist bindings]'
+                        price = 5
+                    elif choice == '2':
+                        weapon = '[Gauntlets]'
+                        price = 10
+                    elif choice == '3':
+                        weapon = '[Maulers]'
+                        price = 20
+                    if inventory['Weapon'] != weapon:
+                        inventory['Weapon'] = weapon
+                        gold -= price
+                        
+            elif style == 'Mage':
+                                if choice == '1':
+                    choice = input('''And what kind of armor do you want?
+1.Wizard robes(5 gold)
+2.Bloody regalia(10 gold)
+3.Unholy cloack(20 gold)
+>>> ''')
+                    if choice == '1':
+                        armor = '[Wizard robes]'
+                        price = 5
+                    elif choice == '2':
+                        armor = '[Bloody regalia]'
+                        price = 10
+                    elif choice == '3':
+                        armor = '[Unholy cloack]'
+                        price = 20
+                    if inventory['Armor'] != armor:
+                        inventory['Armor'] = armor
+                        gold -= price
+                        
+                elif choice == '2':
+                    choice = input('''And what kind of weapon do you want?
+1.Staff(5 gold)
+2.Crystal wand(10 gold)
+3.Dragons breath pikestaff(20 gold)
+>>> ''')
+                    if choice == '1':
+                        weapon = '[Staff]'
+                        price = 5
+                    elif choice == '2':
+                        weapon = '[Crystal wand]'
+                        price = 10
+                    elif choice == '3':
+                        weapon = '[Dragons Breath Pikestaff]'
+                        price = 20
+                    if inventory['Weapon'] != weapon:
+                        inventory['Weapon'] = weapon
+                        gold -= price
+                        
+            elif style == 'Warrior':
+                if choice == '1':
+                    choice = input('''And what kind of armor do you want?
+1.Iron armor(5 gold)
+2.Giants hide(10 gold)
+3.Dragonite plate(20 gold)
+>>> ''')
+                    if choice == '1':
+                        armor = '[Iron armor]'
+                        price = 5
+                    elif choice == '2':
+                        armor = '[Giants hide]'
+                        price = 10
+                    elif choice == '3':
+                        armor = '[Dragonite plate]'
+                        price = 20
+                    if inventory['Armor'] != armor:
+                        inventory['Armor'] = armor
+                        gold -= price
+                elif choice == '2':
+                    choice = input('''And what kind of weapon do you want?
+1.Short sword(5 gold)
+2.Goblin club(10 gold)
+3.Great tooth(20 gold)
+>>> ''')
+                    if choice == '1':
+                        weapon = '[Short sword]'
+                        price = 5
+                    elif choice == '2':
+                        weapon = '[Goblin club]'
+                        price = 10
+                    elif choice == '3':
+                        weapon = '[Great tooth]'
+                        price = 20
+                    if inventory['Weapon'] != weapon:
+                        inventory['Weapon'] = weapon
+                        gold -= price
+                        
         elif choice == '3':
             slow_print('"Welcome, To the library!"')
             slow_print('"Home to knowledge unbound, for a price of course!"')
             print(f'Purse: {gold} gold')
             if style == 'Brawler':
                 slow_print('What do you want to learn?')
-                print('(This will replace your current ability)')
+                print('(This will replace your current Ability)')
                 choice = input('''
 1.Barrage(5 gold)
 2.Meditative aura(10 gold)
@@ -361,7 +486,7 @@ def town(choices, state, gold):
                 if choice == '1':
                     ability = '[Barrage]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [Barrage]!')
@@ -370,7 +495,7 @@ def town(choices, state, gold):
                 elif choice == '2':
                     ability = '[Meditative aura]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [Meditative aura]!')
@@ -379,7 +504,7 @@ def town(choices, state, gold):
                 elif choice == '3':
                     ability = '[CHOMP!]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [CHOMP!]!')
@@ -388,7 +513,7 @@ def town(choices, state, gold):
                 
             elif style == 'Wizard':
                 slow_print('What do you want to learn?')
-                print('(This will replace your current ability)')
+                print('(This will replace your current Ability)')
                 choice = input('''
 1.Firebolt(5 gold)
 2.Cure wounds(10 gold)
@@ -397,7 +522,7 @@ def town(choices, state, gold):
                 if choice == '1':
                     ability = '[Firebolt]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [Firebolt]!')
@@ -406,7 +531,7 @@ def town(choices, state, gold):
                 elif choice == '2':
                     ability = '[Cure wounds]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [Cure wounds]!')
@@ -415,7 +540,7 @@ def town(choices, state, gold):
                 elif choice == '3':
                     ability = '[AK47]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [AK47]!')
@@ -424,7 +549,7 @@ def town(choices, state, gold):
                             
             elif style == 'Warrior':
                 slow_print('What do you want to learn?')
-                print('(This will replace your current ability)')
+                print('(This will replace your current Ability)')
                 choice = input('''
 1.Power swing(5 gold)
 2.Holy word(10 gold)
@@ -433,7 +558,7 @@ def town(choices, state, gold):
                 if choice == '1':
                     ability = '[Power swing]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [Power swing]!')
@@ -442,7 +567,7 @@ def town(choices, state, gold):
                 elif choice == '2':
                     ability = '[Holy word]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [Holy word]!')
@@ -451,7 +576,7 @@ def town(choices, state, gold):
                 elif choice == '3':
                     ability = '[Throw]'
                     if inventory['Ability'] == ability:
-                        print('You already have this ability')
+                        print('You already have this Ability')
                     else:
                         if gold >= 5:
                             print('You gained [Throw]!')
@@ -478,7 +603,7 @@ def woods(Dragon):
         slow_print("You can't seem to enter the woods, as if some unseen force is preventing your movements")
         slow_print(f'"Come back when you are stronger, Hero!"')
         destination = 2
-        
+        return
     elif Dragon == True:
         slow_print('The woods that once excluded you entry now let you pass.')
 
@@ -540,14 +665,15 @@ def done(save):
 #Game Save
 data = Path('data.pkl')#defines file path
 print("Do you want to load a save?")
-file = input("""1.Yes
+file = input("""
+1.Yes
 2.No
 >>> """)
 
 if file == '1' or file == 'Yes':
     with open(data, 'rb') as pickle_file:#grabs all items from data.pkl
         save = pickle.load(pickle_file)
-
+        (name, gold, event, level, stats, state, glock, style, exp, well, skull, max_health, health, choices) = save
 #Charecter Creator
 if name == 0:
     name = input('''What is your name, Hero?
