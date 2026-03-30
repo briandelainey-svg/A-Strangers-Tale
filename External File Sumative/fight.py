@@ -10,7 +10,7 @@
 import random
 
 #Function
-def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, done, bag):
+def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, bag):
     #setup
     global health, gold
     ability = inventory['Ability']
@@ -55,8 +55,6 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
 >>> ''')
             if choice == 'b':
                 bag(inventory)
-            elif choice == 'd':
-                done(save)
             #Player attack
             elif choice == '1':
                 print(f'You attack the {enemy}!')
@@ -124,3 +122,27 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
 
 if __name__ == '__main__':
     print('Fight is the main')
+    max_health = 16
+    inventory = {'Weapon': '[Short Sword]',
+                 'Armor': '[Iron armor]',
+                 'Ability': '[Barrage]',
+                 'Food': {
+                     'Apple' : 0,
+                     'Bread' : 5,
+                     'Jerkey' : 0
+                     }
+                 }
+    battle = 1
+    weapons = {'[Short Sword]' :5}
+    armors = {'[Iron armor]': 5}
+    abilities = {'[Barrage]' :3}
+    script = False
+    stats = {
+    'Str': 5,
+    'Dex': 5,
+    'Con': 5,
+    'Int': 5,
+    'Wis': 5,
+    'Cha': 5
+    }
+    combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, bag)

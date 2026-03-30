@@ -56,7 +56,7 @@ armors = {
     '[Bloody regalia]': 4,
     '[Unholy cloak]': 4,
     
-    '[Iron Armor]': 5,
+    '[Iron armor]': 5,
     '[Giants hide]': 9,
     '[Dragonite plate]': 20
     }#Armor types
@@ -395,7 +395,7 @@ def town(choices, state, gold):
                         gold -= price
                         
             elif style == 'Mage':
-                                if choice == '1':
+                if choice == '1':
                     choice = input('''And what kind of armor do you want?
 1.Wizard robes(5 gold)
 2.Bloody regalia(10 gold)
