@@ -21,7 +21,7 @@ def slow_print(t): #makes text print slower
     for l in t:
         sys.stdout.write(l)
         sys.stdout.flush()
-        time.sleep(0.05) #change this to change speed
+        time.sleep(0) #change this to change speed
     print(' ') #dont touch this
     
 #Arrays
@@ -283,7 +283,7 @@ def town(choices, state, gold):
             slow_print('Walking towards them, you are suddonely accosted from behind.')
             script = True
             battle = 1
-            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, done, bag)
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, bag)
             if outcome == True:
                 event += 1
                 slow_print('Killing the goblin, you make your way towards the cage')

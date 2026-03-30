@@ -8,19 +8,20 @@
 
 #imports
 import random
-
+import time
 #Function
 def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, bag):
     #setup
     global health, gold
     ability = inventory['Ability']
     effect = abilities[ability]
-    cooldown = 0
+    cooldown = 1
     damage = weapons[inventory['Weapon']]
+    choice = None
     #Enemy type
     if battle == 1:
         enemy = 'Goblin'
-        attacks = ["The goblin swings it's club"]
+        attacks = ["swings it's club"]
         hp = 16
         dmg = 4
         goldg = 8
@@ -31,35 +32,34 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
         if cooldown > 0:
             cooldown -= 1
         elif cooldown == 0:
+            cooldown -= 1
             print(f'{ability} is ready')
-        #Resets gaurd
+            time.sleep(.5)
+        #Resets guard
         brace = False
         #Ensures health never exceeds max
         if health > max_health:
             health = max_health
-        #Enemy attack
-        attack = random.choice(attacks)
-        print(f'The {enemy} {attack}!')
-        health -= dmg
-        if brace == True:
-            health += 2
         #Action
-        while choice != 'b' and choice != 'd':
+        while choice != 'b':
+            print(f'You have {health} health remaining')
+            time.sleep(.5)
             print('What do you do?')
             choice = input('''
 1. Attack
-2. Gaurd
+2. Guard
 3. Ability
 4. Heal
 5. Run away
 >>> ''')
+            valid = True
             if choice == 'b':
                 bag(inventory)
             #Player attack
             elif choice == '1':
                 print(f'You attack the {enemy}!')
                 hp -= damage
-            #Gaurd
+            #guard
             elif choice == '2':
                 print(f'You brace yourself for an attack')
                 brace = True
@@ -68,11 +68,11 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
                 #checks if you have an ability
                 if ability!= 0:
                     #Checks if you can use ability
-                    if cooldown == 0:
+                    if cooldown <= 0:
                         cooldown = 3
                         print(f"You use {ability}!")
                         #Checks ability type
-                        if ability == 'Cure wounds' or ability == 'Meditative aura' or ability == 'Holy word':
+                        if ability == '[Cure wounds]' or ability == '[Meditative aura]' or ability == '[Holy word]':
                             #If healing type ability
                             print(f'You healed {effect} health')
                             health += effect
@@ -91,15 +91,19 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
                 print(f"3. Jerkey {inventory['Food']['Jerkey']}")
                 consume = input('>>> ')
                 if consume == '1':
-                    consume = 'Apple'
-                    health += 2
+                    if {inventory['Food']['Apple']} >= 1:
+                        consume = 'Apple'
+                        health += 2
                 elif consume == '2':
-                    consume = 'Bread'
-                    health += 4
+                    if {inventory['Food']['Bread']} >= 1:
+                        consume = 'Bread'
+                        health += 4
                 elif consume == '3':
-                    consume = 'Jerkey'
-                    health += 6
-                inventory['Food'][consume] -= 1
+                    if {inventory['Food']['Jerkey']} >= 1:
+                        consume = 'Jerkey'
+                        health += 6
+                if {inventory['Food'][consume]} >= 1:
+                    inventory['Food'][consume] -= 1
             #Escape
             elif choice == '5':
                 #Checks if this is a scripted battle
@@ -113,16 +117,34 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
                         return health
                     else:
                         print("You couldn't get away.")
-    if health == 0:
+            else:
+                print('Invalid Input')
+                valid = False
+            #Enemy attack
+            if hp > 0 and valid == True:
+                attack = random.choice(attacks)
+                print(f'The {enemy} {attack}!')
+                health -= dmg
+                if brace == True:
+                    health += 2
+                time.sleep(.5)
+                
+            break
+    if health <= 0:
         outcome = False
-    elif hp == 0:
+        print('You died...')
+        
+    elif hp <= 0:
         outcome = True
         gold += goldg
+        print(f'You defeated the {enemy}!')
+        
     return outcome
 
 if __name__ == '__main__':
     print('Fight is the main')
-    max_health = 16
+    def bag(inventory):
+        print(inventory)
     inventory = {'Weapon': '[Short Sword]',
                  'Armor': '[Iron armor]',
                  'Ability': '[Barrage]',
@@ -145,4 +167,8 @@ if __name__ == '__main__':
     'Wis': 5,
     'Cha': 5
     }
+    armor = armors[inventory['Armor']]
+    max_health = stats['Con'] * 5 + armor
+    health = max_health
+    gold = 5
     combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, bag)
