@@ -25,9 +25,17 @@ def slow_print(t): #makes text print slower
     print(' ') #dont touch this
     
 #Arrays
+stats = {
+    'Str': 5,
+    'Dex': 5,
+    'Con': 5,
+    'Int': 5,
+    'Wis': 5,
+    'Lck': 5
+    }#Stats
 inventory = {'Weapon': 0,
              'Armor': None,
-             'Ability': 0,
+             'Ability': '',
              'Food': {
                  'Apple': 0,
                  'Bread': 0,
@@ -35,17 +43,19 @@ inventory = {'Weapon': 0,
                  }
              }#Current Held Items    
 weapons = {0 : 0,
-    '[Fist Bindings]': 4,
-    '[Gauntlets]': 8,
-    '[Maulers]': 16,
+    '[Glock]': 99999,
+           
+    '[Fist Bindings]': 4 * ((stats['Dex'] * .5) + (stats['Wis'] * .3)),
+    '[Gauntlets]': 8 * ((stats['Dex'] * .5) + (stats['Wis'] * .3)),
+    '[Maulers]': 16 * ((stats['Dex'] * .5) + (stats['Wis'] * .3)),
     
-    '[Staff]': 3,
-    '[Crystal Wand]': 2,
-    '[Dragons Breath Pikestaff]': 8,
+    '[Staff]': 3 * ((stats['Int'] * .2) + (stats['Lck'] * .3)),
+    '[Crystal Wand]': 2 * ((stats['Int'] * .2) + (stats['Lck'] * .3)),
+    '[Dragons Breath Pikestaff]': 8 * ((stats['Int'] * .2) + (stats['Lck'] * .3)),
     
-    '[Short Sword]': 5,
-    '[Goblin Club]': 10,
-    '[Great Tooth]': 20
+    '[Short Sword]': 5 * (stats['Str'] * .8),
+    '[Goblin Club]': 10 * (stats['Str'] * .8),
+    '[Great Tooth]': 20 * (stats['Str'] * .8)
     }#Weapon List
 armors = {
     '[Ninja suit]': 3,
@@ -61,18 +71,19 @@ armors = {
     '[Dragonite plate]': 20
     }#Armor types
 abilities = {
-    'Brawler': {
-        '[Barrage]': 3,
-        '[Meditative aura]': 18,
-        '[CHOMP!]': 14},
-    'Wizard': {
-        '[Firebolt]': 5,
-        '[Cure wounds]': 8,
-        '[AK47]': 23},
-    'Warrior': {
-        '[Power swing]': 8,
-        '[Holy word]': 9,
-        '[Throw]': weapons[inventory['Weapon']] * 3}
+    '' : 0,
+    
+    '[Barrage]': 3 * stats['Dex'],
+    '[Meditative aura]': 18 + stats['Wis'],
+    '[CHOMP!]': 14 + ((stats['Dex'] *.75) + (stats['Wis'] +5 )),
+    
+    '[Firebolt]': 5 + stats['Int'],
+    '[Cure wounds]': 8 * (stats['Int'] * .6),
+    '[AK47]': 23 * stats['Lck'],
+    
+    '[Power swing]': 8 + stats['Str'],
+    '[Holy word]': 9,
+    '[Throw]': (weapons[inventory['Weapon']] * 3) + stats['Str']
     }#Abilities
 classes = {
     'Brawler': {
@@ -88,17 +99,6 @@ classes = {
         'Knight': 2
     }
     }#Classes and Subclasses
-
-
-
-stats = {
-    'Str': 5,
-    'Dex': 5,
-    'Con': 5,
-    'Int': 5,
-    'Wis': 5,
-    'Cha': 5
-    }#Stats
 
 choices = []#Choice list
 
@@ -117,6 +117,8 @@ skull = False
 max_health = 15
 health = max_health
 outcome = True
+battle = 0
+script = None
 #Save data
 save = [name, gold, event, level, stats, state, glock, style, exp, well, skull, max_health, health, choices]
 #Functions
@@ -274,8 +276,8 @@ def cabin_ext(choices, well, skull, style, state):
 
     #Town  
 def town(choices, state, gold):
-    global event
-    if event < 1:
+    global event, destination
+    if event != 1:
         while True:
             slow_print('As you enter town, you find it all but deserted. All the people have disapeared.')
             slow_print("Your memory nags at the back of your head that somthing isn't right. The streets should be bustling with noon day shoppers.")
@@ -283,20 +285,22 @@ def town(choices, state, gold):
             slow_print('Walking towards them, you are suddonely accosted from behind.')
             script = True
             battle = 1
-            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, bag)
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold)
+            from fight import outcome
             if outcome == True:
-                event += 1
+                event = 1
                 slow_print('Killing the goblin, you make your way towards the cage')
                 slow_print('Seeing there fallen comrad, the remaning goblins flee.')
                 slow_print('"Thank you, Hero! What is your name?"')
                 time.sleep(.5)
-                slow_print(f'"{name}? Thank you, {name}!"')
+                slow_print(f'"{name}? Very well. Thank you, {name}!"')
                 slow_print('"I am the village blacksmith. Please, come to my shop if you ever need armor or weapons!"')
                 time.sleep(.5)
+                break
             else:
-                fail()
                 destination = 0
-                return destination
+                print('Good job Dumbass')
+                return
         
     slow_print('You enter town square, with the [Butcher], the [Blacksmith], and the [Library]')
     while state == 2:
@@ -627,7 +631,7 @@ Dex(Dexterity)
 Com(Constitution)
 Int(Intelligence)
 Wis(Wisdom)
-Lck(Charisma)
+Lck(Luck)
 >>> ''')
         choices.append(lvlup)
         if lvlup == '1' or lvlup == 'Strength':
@@ -700,7 +704,7 @@ if name == 0:
         elif style == '3':
             style = 'Brawler'
             slow_print('Daring are we, [Brawler]?')
-            weapon = '[Fist Binding]'
+            weapon = '[Fist Bindings]'
         else:
             fail()
         inventory ['Weapon'] = weapon
