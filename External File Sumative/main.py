@@ -120,7 +120,8 @@ outcome = True
 battle = 0
 script = None
 #Save data
-save = [name, gold, event, level, stats, state, glock, style, exp, well, skull, max_health, health, choices]
+save = {'name':name, 'gold':gold, 'event':event, 'level':level, 'stats':stats, 'state':state, 'glock':glock, 'style':style, 'exp':exp, 'well':well, 'skull':skull, 'max_health':max_health, 'health':health,  'choices':choices}
+
 #Functions
     #Cabin Interior
 def cabin(weapon, choices, state, health , max_health, outcome):
@@ -140,7 +141,9 @@ def cabin(weapon, choices, state, health , max_health, outcome):
         choices.append(choice)
         if choice  == 'b':
             bag(inventory, gold)
-        if choice == '1':
+        elif choice == 'd':
+            done(save)
+        elif choice == '1':
             slow_print('You curl up in bed for a short rest')
             print('You recover all your health.')
             health = max_health
@@ -620,7 +623,7 @@ def bag(inventory, gold):
     print(inventory)
     print(f'Purse: {gold} gold')
     #Level
-def level(exp, level):
+def levelup(exp, level):
     slow_print(f'You are level {level}.')
     if exp == 100:
         exp = 0
@@ -661,10 +664,11 @@ def fail():
     
     #Game Save
 def done(save):
+    global destination
     with open(data, 'wb') as pickle_file:
         pickle.dump(save, pickle_file)
         destination = 12
-        return destination
+        return
     
 #Game Save
 data = Path('data.pkl')#defines file path
@@ -677,7 +681,21 @@ file = input("""
 if file == '1' or file == 'Yes':
     with open(data, 'rb') as pickle_file:#grabs all items from data.pkl
         save = pickle.load(pickle_file)
-        (name, gold, event, level, stats, state, glock, style, exp, well, skull, max_health, health, choices) = save
+        name = save['name']
+        gold = save['gold']
+        event = save['event']
+        level = save['level']
+        stats = save['stats']
+        state = save['state']
+        glock = save['glock']
+        style = save['style']
+        exp = save['exp']
+        well = save['well']
+        skull = save['skull']
+        max_health = save['max_health']
+        health = save['health']
+        choices = save['choices']
+    print(f'Welcome back, {name}')
 #Charecter Creator
 if name == 0:
     name = input('''What is your name, Hero?
@@ -722,6 +740,7 @@ while True:
     else:
         armor = 0
     max_health = stats['Con'] * 5 + armor
+    levelup(exp, level)
     state = destination
     if state == 0:#Cabin Interior
         cabin(weapon, choices, state, health, max_health, outcome)
