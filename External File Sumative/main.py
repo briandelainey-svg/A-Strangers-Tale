@@ -105,7 +105,8 @@ choices = []#Choice list
 #Variables
 name = 0
 gold = 0
-event = 0
+eventt = 0
+eventc = 0
 level = 0
 state = 1
 destination = 1
@@ -120,7 +121,7 @@ outcome = True
 battle = 0
 script = None
 #Save data
-save = {'name':name, 'gold':gold, 'event':event, 'level':level, 'stats':stats, 'state':state, 'glock':glock, 'style':style, 'exp':exp, 'well':well, 'skull':skull, 'max_health':max_health, 'health':health,  'choices':choices}
+save = {'name':name, 'gold':gold, 'eventt':eventt, 'eventc': eventc, 'level':level, 'stats':stats, 'state':state, 'glock':glock, 'style':style, 'exp':exp, 'well':well, 'skull':skull, 'max_health':max_health, 'health':health,  'choices':choices}
 
 #Functions
     #Cabin Interior
@@ -279,8 +280,8 @@ def cabin_ext(choices, well, skull, style, state):
 
     #Town  
 def town(choices, state, gold):
-    global event, destination
-    if event != 1:
+    global eventt, destination
+    if eventt != 1:
         while True:
             slow_print('As you enter town, you find it all but deserted. All the people have disapeared.')
             slow_print("Your memory nags at the back of your head that somthing isn't right. The streets should be bustling with noon day shoppers.")
@@ -289,9 +290,9 @@ def town(choices, state, gold):
             script = True
             battle = 1
             combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold)
-            from fight import outcome
+            from fight import outcome, health, goldg
             if outcome == True:
-                event = 1
+                eventt = 1
                 slow_print('Killing the goblin, you make your way towards the cage')
                 slow_print('Seeing there fallen comrad, the remaning goblins flee.')
                 slow_print('"Thank you, Hero! What is your name?"')
@@ -613,11 +614,48 @@ def woods(Dragon):
         return
     elif Dragon == True:
         slow_print('The woods that once excluded you entry now let you pass.')
+        print('WIP Area')
+        destination = 2
+        return
 
     #Castle
-def castle():
-        slow_print('"Ahh. Another Foolish Hero. And who might you be?"')
+def castle(eventc):
+    while eventc != 1:
+        slow_print('''As you walk towards the castle you find the land barren, as if scorched and salted.')
+For miles in every direction the land is flat, not a tree or boulder in sight.
+A league away a troop of goblins are marching towards the castle as well.
+Other than that, the only distinguishing feature is the castle on the horizon.
+Approaching the wretched structure you are approached by a knight in onyx black armor.''')
         
+        slow_print('"Ahh. Another Foolish Hero. And who might you be?"')   
+        choice = input('''1. State your name
+2. Charge the knight
+>>> ''')
+        if choice == '1':
+            slow_print('"Brandor..."')
+            slow_print('The knight suddenly has a clipboard as if he grabbed it from thin air.')
+            slow_print('"And do you have a reservation?"')
+            choice = input('''1. "No I do not"
+2. Charge the knight
+>>> ''')
+            if choice == '1':
+                slow_print('"Tsk tsk. Well, if you do not have a reservation, than it seems I have to kill you"')
+            script = True
+            battle = 2
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold)
+            from fight import outcome, health, goldg
+            if outcome == True:
+                eventc = 1
+            elif outcome == False:
+                fail()
+                destination = 2
+                return
+        elif choice == '2':
+            script = True
+            battle = 2
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold)
+            from fight import outcome, health, goldg
+    
     #Backpack
 def bag(inventory, gold):
     print(inventory)

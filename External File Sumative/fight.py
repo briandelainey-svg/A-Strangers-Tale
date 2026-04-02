@@ -12,7 +12,7 @@ import time
 #Function
 def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold):
     #setup
-    global outcome
+    global outcome, health, goldg
     outcome = None
     ability = inventory['Ability']
     effect = abilities[ability]
@@ -23,9 +23,15 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
     if battle == 1:
         enemy = 'Goblin'
         attacks = ["swings it's club"]
-        hp = 16
+        hp = 60
         dmg = 3
         goldg = 8
+    elif battle == 2:
+        enemy = 'Black Knight'
+        attacks = ['Charges', 'Swings his sword', 'Bites your ankles off']
+        hp = 90
+        dmg = 5
+        goldg = 12
     #Main
     while hp > 0 and health > 0:
         
