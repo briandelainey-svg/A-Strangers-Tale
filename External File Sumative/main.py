@@ -103,30 +103,28 @@ classes = {
 choices = []#Choice list
 
 #Variables
+max_health = stats['Con'] * 5
 name = 0
 gold = 0
 eventt = 0
 eventc = 0
 level = 0
 state = 1
-destination = 1
 glock = 0
 style = 0
 exp = 0
 well = False
-skull = False
-max_health = 15
+skull = False,
 health = max_health
-outcome = True
-battle = 0
-script = None
-#Save data
-save = {'name':name, 'gold':gold, 'eventt':eventt, 'eventc': eventc, 'level':level, 'stats':stats, 'state':state, 'glock':glock, 'style':style, 'exp':exp, 'well':well, 'skull':skull, 'max_health':max_health, 'health':health,  'choices':choices}
+end = False
+outcome : True
+battle : 0
+script : None
 
 #Functions
     #Cabin Interior
-def cabin(weapon, choices, state, health , max_health, outcome):
-    global destination, glock
+def cabin(weapon, choices, health , max_health, outcome):
+    global state, glock
     if outcome == False:
         outcome = True
         slow_print("You wake up back at home. You could've sworn that was real... must've been a dream...")
@@ -143,7 +141,7 @@ def cabin(weapon, choices, state, health , max_health, outcome):
         if choice  == 'b':
             bag(inventory, gold)
         elif choice == 'd':
-            done(save)
+            done()
         elif choice == '1':
             slow_print('You curl up in bed for a short rest')
             print('You recover all your health.')
@@ -158,14 +156,14 @@ def cabin(weapon, choices, state, health , max_health, outcome):
                 inventory['Weapon'] = '[Glock]'
                 glock += 1
         elif choice == '3':
-            destination = 1
+            state = 1
             return health
         else:
             fail()
     
     #Cabin Exterior
-def cabin_ext(choices, well, skull, style, state):
-    global destination
+def cabin_ext(choices, well, skull, style):
+    global state
     slow_print('Standing outside your home, you see a dense forest surounding you, with only a small deer path leeding outwards.')
     while state == 1:
         choice = input('''What do you do?
@@ -177,10 +175,10 @@ def cabin_ext(choices, well, skull, style, state):
         if choice  == 'b':
             bag(inventory, gold)
         elif choice == 'd':
-            done(save)
+            done()
             return
         elif choice == '1':
-            destination = 0
+            state = 0
             return
         elif choice == '2':
             slow_print('Walking around the cabin, you find a mostly empty yard. The only items of note being a deer skull,')
@@ -195,10 +193,10 @@ def cabin_ext(choices, well, skull, style, state):
                 if choice  == 'b':
                     bag(inventory, gold)
                 elif choice == 'd':
-                    done(save)
+                    done()
                     return
                 elif choice == '1':
-                    if skull == False:
+                    if skull != True:
                         slow_print('Looking through the woods, you find the deer skull is always 2 trees away. Always at the edge of your vision.')
                         skull = True
                         while True:
@@ -210,7 +208,7 @@ def cabin_ext(choices, well, skull, style, state):
                             if choice  == 'b':
                                 bag(inventory, gold)
                             elif choice == 'd':
-                                done(save)
+                                done()
                                 return
                             elif choice == '1':
                                 slow_print('Walking through the woods, you follow the skulls gaze to a small clearing.')
@@ -223,13 +221,13 @@ def cabin_ext(choices, well, skull, style, state):
                                 if choice == 'b':
                                     bag(inventory, gold)
                                 elif choice == 'd':
-                                    done(save)
+                                    done()
                                     return
                                 elif choice == '1':
                                     slow_print('"A sorowful outcome. very well hero. Seek my home later."')
                                     fail()
                                     outcome = False
-                                    destination = 0
+                                    state = 0
                                     return
                                 elif choice == '2':
                                     slow_print(f'"Hello, [{name}]. Welcome to my home. This land is full of many odd places as this."')
@@ -246,11 +244,12 @@ def cabin_ext(choices, well, skull, style, state):
                                         ability = '[Barrage]'
                                     inventory['Ability'] = ability
                                     return
+                            elif choice == '2':
+                                break
                     elif skull == True:
                         slow_print('As you try to enter the woods, a strange force keeps you out.')
                         slow_print('Best not to question it')
-                    elif choice == '2':
-                        break
+                    
                 elif choice == '2':
                     if well == False:
                         slow_print('Looking down the well, you see what seems to be a body, only 2 feet down.')
@@ -273,14 +272,14 @@ def cabin_ext(choices, well, skull, style, state):
             else:
                 fail()
         elif choice == '3':
-            destination = 2
+            state = 2
             return
         else:
             fail()
 
     #Town  
-def town(choices, state, gold):
-    global eventt, destination
+def town(choices, health, gold):
+    global eventt, state
     if eventt != 1:
         while True:
             slow_print('As you enter town, you find it all but deserted. All the people have disapeared.')
@@ -289,8 +288,8 @@ def town(choices, state, gold):
             slow_print('Walking towards them, you are suddonely accosted from behind.')
             script = True
             battle = 1
-            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold)
-            from fight import outcome, health, goldg
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold, exp)
+            from fight import outcome, health, gold, exp 
             if outcome == True:
                 eventt = 1
                 slow_print('Killing the goblin, you make your way towards the cage')
@@ -302,7 +301,7 @@ def town(choices, state, gold):
                 time.sleep(.5)
                 break
             else:
-                destination = 0
+                state = 0
                 print('Good job Dumbass')
                 return
         
@@ -321,12 +320,12 @@ def town(choices, state, gold):
         if choice == 'b':
             bag(inventory, gold)
         elif choice == 'd':
-            done(save)
+            done()
             return
         elif choice == '1':
             slow_print('"Welcome, Friend! What can I get for you?"')
             while True:
-                print(f'Purse: [gold] gold')
+                print(f'Purse: {gold} gold')
                 product = input('''
 1.Apple(1 gold)
 2.Bread(3 gold)
@@ -341,8 +340,8 @@ def town(choices, state, gold):
                 elif product == '3':
                     produt = 'Jerkey'
                     price = 5
-                amount = input('''How much?
->>> ''')
+                amount = int(input('''How much?
+>>> '''))
                 total = price * amount
                 if gold / total >= 1:
                     while amount > 0:
@@ -594,28 +593,28 @@ def town(choices, state, gold):
             
                 
         elif choice == '4':
-            destination = 3
+            state = 3
             return
         elif choice == '5':
-            destination = 4
+            state = 4
             return
         elif choice == '6':
             return
-            destination = 1
+            state = 1
             
             
     #The Woods
 def woods(Dragon):
-    global destination
+    global state
     if Dragon == False:
         slow_print("You can't seem to enter the woods, as if some unseen force is preventing your movements")
         slow_print(f'"Come back when you are stronger, Hero!"')
-        destination = 2
+        state = 2
         return
     elif Dragon == True:
         slow_print('The woods that once excluded you entry now let you pass.')
         print('WIP Area')
-        destination = 2
+        state = 2
         return
 
     #Castle
@@ -642,27 +641,28 @@ Approaching the wretched structure you are approached by a knight in onyx black 
                 slow_print('"Tsk tsk. Well, if you do not have a reservation, than it seems I have to kill you"')
             script = True
             battle = 2
-            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold)
-            from fight import outcome, health, goldg
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold, exp)
+            from fight import outcome, health, gold, exp
             if outcome == True:
                 eventc = 1
             elif outcome == False:
                 fail()
-                destination = 2
+                state = 2
                 return
         elif choice == '2':
             script = True
             battle = 2
-            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold)
-            from fight import outcome, health, goldg
+            combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold, exp)
+            from fight import outcome, health, gold, exp
     
     #Backpack
 def bag(inventory, gold):
     print(inventory)
     print(f'Purse: {gold} gold')
     #Level
-def levelup(exp, level):
-    slow_print(f'You are level {level}.')
+def levelup(level, exp):
+    print(f'You are level {level}.')
+    time.sleep(.5)
     if exp == 100:
         exp = 0
         level += 1
@@ -701,12 +701,29 @@ def fail():
     slow_print('Good job Dumbass')
     
     #Game Save
-def done(save):
-    global destination
-    with open(data, 'wb') as pickle_file:
-        pickle.dump(save, pickle_file)
-        destination = 12
-        return
+def done():
+    global end
+    print('Do you want to save your journey?')
+    choice = input('(Y/N)')
+    if choice == 'y':
+        variables = {
+            'inventory' : inventory,
+            'name' : name,
+            'gold' : gold,
+            'eventt' : eventt,
+            'eventc' : eventc,
+            'level' : level,
+            'state' : state,
+            'glock' : glock,
+            'style' : style,
+            'exp' : exp,
+            'well' : well,
+            'skull' : skull,
+            'health' : health}
+        with open(data, 'wb') as pickle_file:
+            pickle.dump(variables, pickle_file)
+    end = True
+    return
     
 #Game Save
 data = Path('data.pkl')#defines file path
@@ -718,22 +735,22 @@ file = input("""
 
 if file == '1' or file == 'Yes':
     with open(data, 'rb') as pickle_file:#grabs all items from data.pkl
-        save = pickle.load(pickle_file)
-        name = save['name']
-        gold = save['gold']
-        event = save['event']
-        level = save['level']
-        stats = save['stats']
-        state = save['state']
-        glock = save['glock']
-        style = save['style']
-        exp = save['exp']
-        well = save['well']
-        skull = save['skull']
-        max_health = save['max_health']
-        health = save['health']
-        choices = save['choices']
+        variables = pickle.load(pickle_file)
+    inventory = variables['inventory']
+    name = variables['name']
+    gold = variables['gold']
+    eventt = variables['eventt']
+    eventc = variables['eventc']
+    level = variables['level']
+    state = variables['state']
+    glock = variables['glock']
+    style = variables['style']
+    exp = variables['exp']
+    well = variables['well']
+    skull = variables['skull'],
+    health = variables['health']
     print(f'Welcome back, {name}')
+    
 #Charecter Creator
 if name == 0:
     name = input('''What is your name, Hero?
@@ -773,23 +790,23 @@ if name == 0:
 print('(Enter "b" at any time to open backpack)')
 print('(Enter "d" at any time to close game)')
 while True:
+    if end == True:#Game done
+        print('Goodbye')
+        sys.exit()
     if inventory['Armor'] != None:
         armor = armors[inventory['Armor']]
     else:
         armor = 0
     max_health = stats['Con'] * 5 + armor
     levelup(exp, level)
-    state = destination
     if state == 0:#Cabin Interior
-        cabin(weapon, choices, state, health, max_health, outcome)
+        cabin(weapon, choices, health, max_health, outcome)
     elif state == 1:#Cabin Exterior
-        cabin_ext(choices, well, skull, style, state)
+        cabin_ext(choices, well, skull, style)
     elif state == 2:#Town
-        town(choices, state, gold)
+        town(choices, health, gold)
     elif state == 3:#Wandering Woods
-        woods(choices, state)
+        woods(choices)
     elif state == 4:#Castle
-        castle(choices, state)
-    elif state == 12:#Game done
-        print('Goodbye')
-        sys.exit()
+        castle(choices)
+    

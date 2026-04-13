@@ -10,9 +10,9 @@
 import random
 import time
 #Function
-def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold):
+def combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold, exp):
     #setup
-    global outcome, health, goldg
+    global outcome
     outcome = None
     ability = inventory['Ability']
     effect = abilities[ability]
@@ -26,12 +26,14 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
         hp = 60
         dmg = 3
         goldg = 8
+        expg = 12
     elif battle == 2:
         enemy = 'Black Knight'
         attacks = ['Charges', 'Swings his sword', 'Bites your ankles off']
         hp = 90
         dmg = 5
         goldg = 12
+        expg = 16
     #Main
     while hp > 0 and health > 0:
         
@@ -136,13 +138,14 @@ def combat(max_health, inventory, battle, weapons, armors, abilities, script, st
     if health <= 0:
         outcome = False
         print('You died...')
-        return health, gold
+        return health, gold, exp
         
     elif hp <= 0:
         outcome = True
         gold += goldg
+        exp += expg
         print(f'You defeated the {enemy}!')
-        return health, gold
+        return health, gold, exp
     
 outcome = False
 if __name__ == '__main__':
@@ -175,4 +178,4 @@ if __name__ == '__main__':
     max_health = stats['Con'] * 5 + armor
     health = max_health
     gold = 5
-    combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, health, gold)
+    combat(max_health, inventory, battle, weapons, armors, abilities, script, stats, gold)
